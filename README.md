@@ -4,3 +4,5 @@ Goals:
 - Develop own RPG game engine
 - Get experience with game design/develpment
 - Get experience with REST 
+
+Team: Nikita Dvoriadkin, Timur Uzakov
