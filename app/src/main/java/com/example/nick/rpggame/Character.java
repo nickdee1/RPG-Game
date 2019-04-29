@@ -17,8 +17,8 @@ public abstract class Character {
     protected final int characterWidth;
     protected final int characterHeight;
 
-    protected final int x;
-    protected final int y;
+    protected int x;
+    protected int y;
 
     public Character(Bitmap image, int rowCount, int columnCount, int x, int y) {
         this.image = image;
