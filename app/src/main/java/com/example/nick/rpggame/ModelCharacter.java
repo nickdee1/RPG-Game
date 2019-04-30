@@ -15,7 +15,7 @@ public class ModelCharacter extends Character {
     private int rowUsing = ROW_LEFT_TO_RIGHT;
     private int colUsing;
 
-    private boolean stopped = true;
+    private boolean stopped = false;
 
     private Bitmap[] leftToRights;
     private Bitmap[] rightToLefts;
