@@ -1,4 +1,4 @@
-package com.example.nick.rpggame;
+package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
 
@@ -10,8 +10,8 @@ public abstract class GameObject {
 
     protected Bitmap image;
 
-    protected int x;
-    protected int y;
+    int x;
+    int y;
 
     private int objectWidth;
     private int objectHeight;
@@ -42,7 +42,10 @@ public abstract class GameObject {
         return objectHeight;
     }
 
-    public Bitmap setImage() {
+    /**
+     * Creates object's image from png IMAGE
+     **/
+    public Bitmap createImage() {
         return Bitmap.createBitmap(image, 0, 0, getObjectWidth(), getObjectHeight());
     }
 }

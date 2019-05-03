@@ -1,19 +1,18 @@
-package com.example.nick.rpggame;
+package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class Heart extends GameObject {
 
-    private GameSurface gameSurface;
+
     private Bitmap heartImage;
 
 
-    public Heart(GameSurface gameSurface, Bitmap image, int x, int y) {
+    public Heart(Bitmap image, int x, int y) {
         super(image, x, y);
 
-        this.gameSurface = gameSurface;
-        this.heartImage = this.setImage();
+        this.heartImage = this.createImage();
     }
 
     public void draw(Canvas canvas) {

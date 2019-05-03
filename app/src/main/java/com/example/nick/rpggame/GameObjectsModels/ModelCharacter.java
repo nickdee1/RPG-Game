@@ -1,9 +1,15 @@
-package com.example.nick.rpggame;
+package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import com.example.nick.rpggame.GameSurface;
+
 
 import java.util.concurrent.TimeUnit;
+
+/**
+ * Blueprint for any character in game
+ * */
 
 public class ModelCharacter extends Character {
 
@@ -42,7 +48,7 @@ public class ModelCharacter extends Character {
         this.leftToRights = new Bitmap[columnCount]; // 3
         this.bottomToTops = new Bitmap[columnCount]; // 3
 
-        for(int col = 0; col < this.columnCount; col++ ) {
+        for(int col = 0; col < this.columnCount; col++) {
             this.topToBottoms[col] = this.createImageAt(ROW_TOP_TO_BOTTOM, col);
             this.rightToLefts[col]  = this.createImageAt(ROW_RIGHT_TO_LEFT, col);
             this.leftToRights[col] = this.createImageAt(ROW_LEFT_TO_RIGHT, col);
@@ -52,7 +58,18 @@ public class ModelCharacter extends Character {
 
     /* Animation handling methods */
 
-    public Bitmap[] getMoveBitmaps()  {
+
+    /**
+     * Returns current Bitmap image of character's movement
+     * */
+
+    private Bitmap getCurrentMoveBitmap()  {
+        Bitmap[] bitmaps = this.getMoveBitmaps();
+        assert bitmaps != null;
+        return bitmaps[this.colUsing];
+    }
+
+    private Bitmap[] getMoveBitmaps()  {
         switch (rowUsing)  {
             case ROW_BOTTOM_TO_TOP:
                 return  this.bottomToTops;
@@ -65,11 +82,6 @@ public class ModelCharacter extends Character {
             default:
                 return null;
         }
-    }
-
-    public Bitmap getCurrentMoveBitmap()  {
-        Bitmap[] bitmaps = this.getMoveBitmaps();
-        return bitmaps[this.colUsing];
     }
 
     private void animationEnabled() {
@@ -86,7 +98,7 @@ public class ModelCharacter extends Character {
     }
 
     private void changeCharacterModel() {
-        if(movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
+        if (movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
             this.rowUsing = ROW_TOP_TO_BOTTOM;
         }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
             this.rowUsing = ROW_BOTTOM_TO_TOP;
@@ -95,43 +107,21 @@ public class ModelCharacter extends Character {
         }
     }
 
+    /**
+     * Draw character on surface with his current movement image
+     * */
+
     public void draw(Canvas canvas)  {
         Bitmap bitmap = this.getCurrentMoveBitmap();
         canvas.drawBitmap(bitmap, x, y, null);
-        this.lastDrawNanoTime= System.nanoTime();
+        this.lastDrawNanoTime = System.nanoTime();
     }
 
     /* Movement handling methods */
 
-    public void run () {
-        long now = System.nanoTime();
-
-        int deltaTime = (int) ((now - lastDrawNanoTime) / 1000000);
-
-        float distance = VELOCITY * deltaTime;
-
-        double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
-
-        // Calculate new position of the game character.
-        this.x = x +  (int)(distance* movingVectorX / movingVectorLength);
-        this.y = y +  (int)(distance* movingVectorY / movingVectorLength);
-
-    }
-
-    public void stop() {
-
-        double distance = Math.sqrt(movingVectorX*movingVectorX + movingVectorY*movingVectorY);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep((long) ((long) distance * 2.3));
-            this.setMovingVector(0,0);
-            this.setStopped(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
+    /**
+     * Method handles character's movement
+     * */
     public void updateCharacterMovement()  {
 
         animationEnabled();
@@ -163,6 +153,35 @@ public class ModelCharacter extends Character {
     }
 
 
+    private void run() {
+        long now = System.nanoTime();
+
+        int deltaTime = (int) ((now - lastDrawNanoTime) / 1000000);
+
+        float distance = VELOCITY * deltaTime;
+
+        double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
+
+        // Calculate new position of the game character.
+        this.x = x +  (int)(distance* movingVectorX / movingVectorLength);
+        this.y = y +  (int)(distance* movingVectorY / movingVectorLength);
+
+    }
+
+    public void stop() {
+
+        double distance = Math.sqrt(movingVectorX*movingVectorX + movingVectorY*movingVectorY);
+
+        try {
+            TimeUnit.MILLISECONDS.sleep((long) ((long) distance * 2.3));
+            this.setMovingVector(0,0);
+            this.setStopped(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void setMovingVector(int movingVectorX, int movingVectorY)  {
         this.movingVectorX = movingVectorX;
         this.movingVectorY = movingVectorY;
@@ -172,7 +191,7 @@ public class ModelCharacter extends Character {
         this.stopped = stopped;
     }
 
-    public boolean isSetStopped() {
+    private boolean isSetStopped() {
         return stopped;
     }
 }

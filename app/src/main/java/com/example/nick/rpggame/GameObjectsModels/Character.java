@@ -1,8 +1,10 @@
-package com.example.nick.rpggame;
+package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
 
-/* A blueprint for any character in game */
+/**
+ * Interface for any character in game
+ **/
 
 public abstract class Character {
 
@@ -34,8 +36,10 @@ public abstract class Character {
         this.characterWidth = this.IMAGE_WIDTH / columnCount;
     }
 
-    // Function that returns character's model. Used to create animations
-    protected Bitmap createImageAt(int row, int column) {
+    /**
+     * Creates character's model from PNG image
+     * */
+    public Bitmap createImageAt(int row, int column) {
         return Bitmap.createBitmap(image, column*characterWidth, row*characterWidth, characterWidth, characterHeight);
     }
 

@@ -5,7 +5,7 @@ import android.graphics.*;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.MotionEvent;
-
+import com.example.nick.rpggame.GameObjectsModels.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +21,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private ModelCharacter mainCharacter;
     private Skeleton skeleton;
     private List<Heart> health = new ArrayList<Heart>();
-
+    private Chest chest;
 
     /**
      * Methods initializes health of character at the
      * beginning of game
      **/
     private void characterHealthInit(Bitmap heartBitmap) {
-        Heart h1 = new Heart(this, heartBitmap, 50, 50);
-        Heart h2 = new Heart(this, heartBitmap, 170, 50);
-        Heart h3 = new Heart(this, heartBitmap, 290, 50);
+        Heart h1 = new Heart(heartBitmap, 50, 50);
+        Heart h2 = new Heart(heartBitmap, 170, 50);
+        Heart h3 = new Heart(heartBitmap, 290, 50);
 
         this.health.add(h1);
         this.health.add(h2);
@@ -53,11 +53,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
         Bitmap knightBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.knight);
         Bitmap heart = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
+        Bitmap chest = BitmapFactory.decodeResource(this.getResources(), R.drawable.chest);
+        characterHealthInit(heart);
+
 
         this.mainCharacter = new ModelCharacter(this, knightBitmap,200,885);
         this.skeleton = new Skeleton(this, skeletonBitmap,300,150);
+        this.chest = new Chest(chest, 700, 300);
 
-        characterHealthInit(heart);
+
 
         this.gameThread = new GameThread(this, holder);
         this.gameThread.setRunning(true);
@@ -100,6 +104,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         this.mainCharacter.draw(canvas);
         this.skeleton.draw(canvas);
+        this.chest.draw(canvas);
 
         for (Heart h: health) {
             h.draw(canvas);
