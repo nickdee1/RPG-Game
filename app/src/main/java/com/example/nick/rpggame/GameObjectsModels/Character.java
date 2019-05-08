@@ -10,17 +10,17 @@ public abstract class Character {
 
     protected Bitmap image;
 
-    protected final int rowCount;
-    protected final int columnCount;
+    final int rowCount;
+    final int columnCount;
 
-    protected final int IMAGE_WIDTH;
-    protected final int IMAGE_HEIGHT;
+    private final int IMAGE_WIDTH;
+    private final int IMAGE_HEIGHT;
 
-    protected final int characterWidth;
-    protected final int characterHeight;
+    final int characterWidth;
+    final int characterHeight;
 
-    protected int x;
-    protected int y;
+    int x;
+    int y;
 
     public Character(Bitmap image, int rowCount, int columnCount, int x, int y) {
         this.image = image;
