@@ -6,6 +6,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.MotionEvent;
 import com.example.nick.rpggame.GameObjectsModels.*;
+
+import java.lang.Character;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +20,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread gameThread;
 
+    private MainMenu mainMenu;
+    private GameButton playGameButton;
+
     /* Game objects */
-    private ModelCharacter mainCharacter;
+    private MainCharacter mainCharacter;
     private Skeleton skeleton;
     private Chest chest;
 
@@ -29,11 +34,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private GameButton gameButton;
 
     private GameButton resumeGameButton;
+    private GameButton toMainMenuButton;
 
     private Bitmap pauseBackground;
 
 
     private boolean paused = false;
+    private boolean started = false;
 
     /**
      * Methods initializes health of character at the
@@ -55,7 +62,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         this.setFocusable(true);
 
-
         this.getHolder().addCallback(this);
     }
 
@@ -64,14 +70,27 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
+
+        /* Game Menu view initialization */
+        Bitmap mainMenuBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.main_menu);
+        mainMenuBitmap = Bitmap.createScaledBitmap(mainMenuBitmap, 1900, 1080, false);
+
+        Bitmap playButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play_button);
+        playButtonBitmap = Bitmap.createScaledBitmap(playButtonBitmap, 650, 200, false);
+
+        this.playGameButton = new GameButton(playButtonBitmap, 625, 445);
+        this.mainMenu = new MainMenu(mainMenuBitmap);
+
+        this.mainMenu.setPlayButton(playGameButton);
+
         Bitmap skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
         Bitmap knightBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.knight);
         Bitmap heart = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
         Bitmap chest = BitmapFactory.decodeResource(this.getResources(), R.drawable.chest);
 
 
-        this.mainCharacter = new ModelCharacter(this, knightBitmap,200,885);
-        this.skeleton = new Skeleton(this, skeletonBitmap,300,150);
+        this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
+        this.skeleton = new Skeleton(this, skeletonBitmap,1000,150, this.mainCharacter);
         this.chest = new Chest(chest, 700, 300);
 
         /* Game components images initialization */
@@ -84,12 +103,15 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap resumeGameButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.resume_button);
         resumeGameButtonBitmap = Bitmap.createScaledBitmap(resumeGameButtonBitmap, 386, 116, false);
 
+        Bitmap toMainMenuButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.back_to_menu_button);
+        toMainMenuButtonBitmap = Bitmap.createScaledBitmap(toMainMenuButtonBitmap, 386, 116, false);
 
         this.gameButton = new GameButton(pauseButtonBitmap, 1620, 10);
         this.background = Bitmap.createScaledBitmap(backgroundBitmap, 1900, 1080, false);
         this.pauseBackground = Bitmap.createScaledBitmap(pauseBackgroundBitmap, 1130, 450, false);
 
         this.resumeGameButton = new GameButton(resumeGameButtonBitmap, 750, 450);
+        this.toMainMenuButton = new GameButton(toMainMenuButtonBitmap, 750, 590);
 
 
         characterHealthInit(heart);
@@ -127,42 +149,48 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
      **/
     public void update() {
 
-        if (!paused) {
-            skeleton.updateCharacterMovement();
-            mainCharacter.updateCharacterMovement();
-        }
-        else {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (started) {
+
+            if (!paused) {
+                skeleton.updateCharacterMovement();
+                mainCharacter.updateCharacterMovement();
+            } else {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
+        if (!started) {
+            this.mainMenu.draw(canvas);
+            this.playGameButton.draw(canvas);
 
-        canvas.drawBitmap(this.background, 0,0, null);
+        } else {
 
-        this.mainCharacter.draw(canvas);
-        this.skeleton.draw(canvas);
-        this.chest.draw(canvas);
+            canvas.drawBitmap(this.background, 0, 0, null);
+
+            this.mainCharacter.draw(canvas);
+            this.skeleton.draw(canvas);
+            this.chest.draw(canvas);
 
 
-        for (Heart h: health) {
-            h.draw(canvas);
+            for (Heart h : health) {
+                h.draw(canvas);
+            }
+
+            if (paused) {
+                canvas.drawBitmap(pauseBackground, 395, 315, null);
+                this.resumeGameButton.draw(canvas);
+                this.toMainMenuButton.draw(canvas);
+            } else this.gameButton.draw(canvas);
         }
-
-        if (paused)  {
-            canvas.drawBitmap(pauseBackground, 395, 315, null);
-            this.resumeGameButton.draw(canvas);
-        }
-        else this.gameButton.draw(canvas);
-
     }
 
     /**
@@ -177,36 +205,44 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             int y = (int)event.getY();
 
 
-            /* User touched PAUSE button */
-            if (gameButton.isPressed(x, y)) {
-                System.out.println("Button pressed\n");
+            if (!started && playGameButton.isPressed(x, y)) {
+                started = true;
+                return true;
+            } else {
 
-                paused = true;
+                /* User touched PAUSE button */
+                if (gameButton.isPressed(x, y)) {
+                    System.out.println("Button pressed\n");
 
-            } else if (paused && resumeGameButton.isPressed(x, y)) {
-                paused = !paused;
+                    paused = true;
 
-            } else if (!paused) {
+                } else if (paused && resumeGameButton.isPressed(x, y)) {
+                    paused = !paused;
 
-                this.mainCharacter.setStopped(false);
-                this.skeleton.setStopped(false);
+                } else if (paused && toMainMenuButton.isPressed(x,y)) {
+                    started = false;
+                } else if (!paused) {
 
-                final int movingVectorX = x -  this.mainCharacter.getX() ;
-                final int movingVectorY = y -  this.mainCharacter.getY() ;
+                    this.mainCharacter.setStopped(false);
+                    this.skeleton.setStopped(false);
 
-                final int movingVectorX1 = x -  this.skeleton.getX() ;
-                final int movingVectorY1 = y -  this.skeleton.getY() ;
+                    final int movingVectorX = x - this.mainCharacter.getX();
+                    final int movingVectorY = y - this.mainCharacter.getY();
 
-
-                this.mainCharacter.setMovingVector(movingVectorX, movingVectorY);
-
-                this.mainCharacter.setStopped_X(x);
-                this.mainCharacter.setStopped_Y(y);
+                    final int movingVectorX1 = x - this.skeleton.getX();
+                    final int movingVectorY1 = y - this.skeleton.getY();
 
 
-                this.skeleton.setMovingVector(movingVectorX1, movingVectorY1);
+                    this.mainCharacter.setMovingVector(movingVectorX, movingVectorY);
+
+                    this.mainCharacter.setStopped_X(x);
+                    this.mainCharacter.setStopped_Y(y);
+
+
+                    //this.skeleton.setMovingVector(movingVectorX1, movingVectorY1);
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * Blueprint for any character in game
  * */
 
-public class ModelCharacter extends Character{
+public class ModelCharacter extends Character {
 
     private static final int ROW_TOP_TO_BOTTOM = 0;
     private static final int ROW_RIGHT_TO_LEFT = 1;
@@ -28,10 +28,10 @@ public class ModelCharacter extends Character{
     private Bitmap[] topToBottoms;
     private Bitmap[] bottomToTops;
 
-    private static final float VELOCITY = 0.5f;
+    float VELOCITY = 0.5f;
 
-    private int movingVectorX = 10;
-    private int movingVectorY = 5;
+    private int movingVectorX = 0;
+    private int movingVectorY = 0;
 
     private int stopped_X;
     private int stopped_Y;
@@ -127,10 +127,14 @@ public class ModelCharacter extends Character{
 
         animationEnabled();
 
-        if ((x >= stopped_X - 40 && x <= stopped_X + 40) && (y >= stopped_Y - 40 && y <= stopped_Y + 40))
+        if ((x >= stopped_X - 40 && x <= stopped_X + 40) && (y >= stopped_Y - 40 && y <= stopped_Y + 40)) {
             setMovingVector(0,0);
+            setStopped(true);
+        }
 
         run_mov();
+
+
 
         //Character stops if touches the edge of screen
         if(this.x < 0)  {
@@ -154,6 +158,9 @@ public class ModelCharacter extends Character{
 
 
     private void run_mov() {
+
+        if (movingVectorX > 0 || movingVectorY > 0) setStopped(false);
+
         long now = System.nanoTime();
 
         int deltaTime = (int) ((now - lastDrawNanoTime) / 1000000);
