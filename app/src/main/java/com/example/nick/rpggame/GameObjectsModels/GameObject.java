@@ -10,8 +10,8 @@ public abstract class GameObject {
 
     protected Bitmap image;
 
-    public int x;
-    public int y;
+    protected int x;
+    protected int y;
 
     private int objectWidth;
     private int objectHeight;

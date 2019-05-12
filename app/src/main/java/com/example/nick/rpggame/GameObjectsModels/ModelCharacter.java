@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * Blueprint for any character in game
  * */
 
-public class ModelCharacter extends Character {
+public class ModelCharacter extends Character{
 
     private static final int ROW_TOP_TO_BOTTOM = 0;
     private static final int ROW_RIGHT_TO_LEFT = 1;
@@ -32,6 +32,9 @@ public class ModelCharacter extends Character {
 
     private int movingVectorX = 10;
     private int movingVectorY = 5;
+
+    private int stopped_X;
+    private int stopped_Y;
 
 
     private long lastDrawNanoTime = -1;
@@ -98,13 +101,10 @@ public class ModelCharacter extends Character {
     }
 
     private void changeCharacterModel() {
-        if (movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-            this.rowUsing = ROW_TOP_TO_BOTTOM;
-        }else if(movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) {
-            this.rowUsing = ROW_BOTTOM_TO_TOP;
-        }else  {
-            this.rowUsing = ROW_LEFT_TO_RIGHT;
-        }
+        if (movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) this.rowUsing = ROW_TOP_TO_BOTTOM;
+         else if (movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) this.rowUsing = ROW_BOTTOM_TO_TOP;
+         else if (movingVectorX < 0) this.rowUsing = ROW_RIGHT_TO_LEFT;
+         else  this.rowUsing = ROW_LEFT_TO_RIGHT;
     }
 
     /**
@@ -124,8 +124,13 @@ public class ModelCharacter extends Character {
      * */
     public void updateCharacterMovement()  {
 
+
         animationEnabled();
-        run();
+
+        if ((x >= stopped_X - 40 && x <= stopped_X + 40) && (y >= stopped_Y - 40 && y <= stopped_Y + 40))
+            setMovingVector(0,0);
+
+        run_mov();
 
         //Character stops if touches the edge of screen
         if(this.x < 0)  {
@@ -136,7 +141,7 @@ public class ModelCharacter extends Character {
             this.movingVectorX = 0;
         }
 
-        if(this.y < 0 )  {
+        if(this.y < 0)  {
             this.y = 0;
             this.movingVectorY = 0;
         } else if(this.y > this.gameSurface.getHeight() - characterHeight)  {
@@ -144,16 +149,11 @@ public class ModelCharacter extends Character {
             this.movingVectorY = 0 ;
         }
 
-
-        if( movingVectorX > 0 )  {
-            changeCharacterModel();
-        } else {
-            changeCharacterModel();
-        }
+        changeCharacterModel();
     }
 
 
-    private void run() {
+    private void run_mov() {
         long now = System.nanoTime();
 
         int deltaTime = (int) ((now - lastDrawNanoTime) / 1000000);
@@ -168,19 +168,6 @@ public class ModelCharacter extends Character {
 
     }
 
-    public void stop() {
-
-        double distance = Math.sqrt(movingVectorX*movingVectorX + movingVectorY*movingVectorY);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep((long) ((long) distance * 2.3));
-            this.setMovingVector(0,0);
-            this.setStopped(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public void setMovingVector(int movingVectorX, int movingVectorY)  {
         this.movingVectorX = movingVectorX;
@@ -193,5 +180,14 @@ public class ModelCharacter extends Character {
 
     private boolean isSetStopped() {
         return stopped;
+    }
+
+
+    public void setStopped_X(int stopped_X) {
+        this.stopped_X = stopped_X;
+    }
+
+    public void setStopped_Y(int stopped_Y) {
+        this.stopped_Y = stopped_Y;
     }
 }

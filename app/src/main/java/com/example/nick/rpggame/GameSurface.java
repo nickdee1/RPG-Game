@@ -26,9 +26,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     /* Game components */
     private Bitmap background;
     private List<Heart> health = new ArrayList<Heart>();
-    private PauseButton pauseButton;
+    private GameButton gameButton;
 
-    private Bitmap cancelButton;
+    private GameButton resumeGameButton;
+
+    private Bitmap pauseBackground;
+
 
     private boolean paused = false;
 
@@ -73,15 +76,21 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         /* Game components images initialization */
         Bitmap backgroundBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
+        Bitmap pauseBackgroundBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause_backgound);
+
         Bitmap pauseButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause_button);
         pauseButtonBitmap = Bitmap.createScaledBitmap(pauseButtonBitmap, 150, 150, false);
 
-        Bitmap cancelButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.close_buttom);
-        cancelButton = Bitmap.createScaledBitmap(cancelButtonBitmap, 150, 150, false);
+        Bitmap resumeGameButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.resume_button);
+        resumeGameButtonBitmap = Bitmap.createScaledBitmap(resumeGameButtonBitmap, 386, 116, false);
 
 
-        this.pauseButton = new PauseButton(pauseButtonBitmap, 1620, 10);
+        this.gameButton = new GameButton(pauseButtonBitmap, 1620, 10);
         this.background = Bitmap.createScaledBitmap(backgroundBitmap, 1900, 1080, false);
+        this.pauseBackground = Bitmap.createScaledBitmap(pauseBackgroundBitmap, 1130, 450, false);
+
+        this.resumeGameButton = new GameButton(resumeGameButtonBitmap, 750, 450);
+
 
         characterHealthInit(heart);
 
@@ -117,16 +126,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
      * Updates objects' state on Game Surface
      **/
     public void update() {
-        skeleton.updateCharacterMovement();
-        mainCharacter.updateCharacterMovement();
 
-        if (paused) {
+        if (!paused) {
+            skeleton.updateCharacterMovement();
+            mainCharacter.updateCharacterMovement();
+        }
+        else {
             try {
-                gameThread.wait();
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
     }
 
     @Override
@@ -145,9 +157,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             h.draw(canvas);
         }
 
-        this.pauseButton.draw(canvas);
-
-        if (paused) canvas.drawBitmap(cancelButton,1620,10,null);
+        if (paused)  {
+            canvas.drawBitmap(pauseBackground, 395, 315, null);
+            this.resumeGameButton.draw(canvas);
+        }
+        else this.gameButton.draw(canvas);
 
     }
 
@@ -164,10 +178,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
             /* User touched PAUSE button */
-            if ((x >= 1620 && x <= 1770) && (y >= 10 && y <= 160)) {
+            if (gameButton.isPressed(x, y)) {
                 System.out.println("Button pressed\n");
-                pauseButton.setPressed(true);
 
+                paused = true;
+
+            } else if (paused && resumeGameButton.isPressed(x, y)) {
                 paused = !paused;
 
             } else if (!paused) {
@@ -183,8 +199,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
                 this.mainCharacter.setMovingVector(movingVectorX, movingVectorY);
-                this.mainCharacter.stop();
-                this.mainCharacter.setStopped(true);
+
+                this.mainCharacter.setStopped_X(x);
+                this.mainCharacter.setStopped_Y(y);
+
 
                 this.skeleton.setMovingVector(movingVectorX1, movingVectorY1);
             }

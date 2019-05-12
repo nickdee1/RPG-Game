@@ -1,21 +1,22 @@
 package com.example.nick.rpggame;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.view.SurfaceHolder;
 import com.example.nick.rpggame.GameObjectsModels.GameObject;
 
-public class PauseButton extends GameObject {
+public class GameButton extends GameObject {
 
-    private boolean pressed;
     private Bitmap pausedButtonBitmap;
+    private int width;
+    private int height;
 
 
-    public PauseButton(Bitmap image, int x, int y) {
+    public GameButton(Bitmap image, int x, int y) {
         super(image, x, y);
 
         pausedButtonBitmap = image;
+        this.width = image.getWidth();
+        this.height = image.getHeight();
     }
 
     /* Draw pause button */
@@ -23,12 +24,8 @@ public class PauseButton extends GameObject {
         canvas.drawBitmap(pausedButtonBitmap, x, y, null);
     }
 
-    public boolean isPressed() {
-        return pressed;
-    }
-
-    public void setPressed(boolean pressed) {
-        this.pressed = pressed;
+    public boolean isPressed(int touchedX, int touchedY) {
+        return (touchedX <= x + this.width && touchedX >= x) && (touchedY <= y + this.height && touchedY >= y);
     }
 
 
