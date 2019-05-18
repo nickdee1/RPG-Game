@@ -7,8 +7,8 @@ import android.view.SurfaceView;
 import android.view.MotionEvent;
 import com.example.nick.rpggame.GameObjectsModels.*;
 
-import java.lang.Character;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -20,6 +20,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread gameThread;
 
+    
+
     private MainMenu mainMenu;
     private GameButton playGameButton;
 
@@ -28,15 +30,22 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private Skeleton skeleton;
     private Chest chest;
 
+    private List<Skeleton> skeletons = new ArrayList<Skeleton>();
+
     /* Game components */
     private Bitmap background;
+
     private List<Heart> health = new ArrayList<Heart>();
+    private Bitmap heartBitmap;
+
     private GameButton gameButton;
+    private GameButton hitButton;
 
     private GameButton resumeGameButton;
     private GameButton toMainMenuButton;
 
     private Bitmap pauseBackground;
+
 
 
     private boolean paused = false;
@@ -46,15 +55,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
      * Methods initializes health of character at the
      * beginning of game
      **/
-    private void characterHealthInit(Bitmap heartBitmap) {
-        Heart h1 = new Heart(heartBitmap, 50, 50);
-        Heart h2 = new Heart(heartBitmap, 170, 50);
-        Heart h3 = new Heart(heartBitmap, 290, 50);
+    private void characterHealthUpdate() {
 
-        this.health.add(h1);
-        this.health.add(h2);
-        this.health.add(h3);
+        this.health.clear();
+        for (int i = 0; i < this.mainCharacter.getHealth(); i ++) {
+            this.health.add(new Heart(heartBitmap, 50 + i*120, 50));
+        }
     }
+
 
 
     public GameSurface(Context context) {
@@ -66,7 +74,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-
+    /**
+     * Game Images initialization after launching the game
+     **/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
@@ -85,12 +95,18 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         Bitmap skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
         Bitmap knightBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.knight);
-        Bitmap heart = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
+        this.heartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
         Bitmap chest = BitmapFactory.decodeResource(this.getResources(), R.drawable.chest);
+
 
 
         this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
         this.skeleton = new Skeleton(this, skeletonBitmap,1000,150, this.mainCharacter);
+
+        for (int i = 0; i < 4; i++) {
+            this.skeletons.add(new Skeleton(this, skeletonBitmap, 1000 + i*30, 170 + i*43, this.mainCharacter));
+        }
+
         this.chest = new Chest(chest, 700, 300);
 
         /* Game components images initialization */
@@ -106,15 +122,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap toMainMenuButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.back_to_menu_button);
         toMainMenuButtonBitmap = Bitmap.createScaledBitmap(toMainMenuButtonBitmap, 386, 116, false);
 
+        Bitmap hitButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.hit_button);
+        hitButtonBitmap = Bitmap.createScaledBitmap(hitButtonBitmap, 200, 200, false);
+
         this.gameButton = new GameButton(pauseButtonBitmap, 1620, 10);
         this.background = Bitmap.createScaledBitmap(backgroundBitmap, 1900, 1080, false);
         this.pauseBackground = Bitmap.createScaledBitmap(pauseBackgroundBitmap, 1130, 450, false);
 
         this.resumeGameButton = new GameButton(resumeGameButtonBitmap, 750, 450);
         this.toMainMenuButton = new GameButton(toMainMenuButtonBitmap, 750, 590);
+        this.hitButton = new GameButton(hitButtonBitmap, 1530, 840);
 
 
-        characterHealthInit(heart);
+        characterHealthUpdate();
 
 
         this.gameThread = new GameThread(this, holder);
@@ -144,16 +164,23 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+
     /**
-     * Updates objects' state on Game Surface
+     * Updates objects' state in game
      **/
     public void update() {
 
         if (started) {
 
             if (!paused) {
-                skeleton.updateCharacterMovement();
+               // skeleton.updateCharacterMovement();
+
+                for (Skeleton skeleton: this.skeletons) {
+                    skeleton.updateCharacterMovement();
+                }
+
                 mainCharacter.updateCharacterMovement();
+                characterHealthUpdate();
             } else {
                 try {
                     Thread.sleep(1);
@@ -164,11 +191,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+
+    /**
+     * Updates objects' place on canvas
+     * */
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
         if (!started) {
+
             this.mainMenu.draw(canvas);
             this.playGameButton.draw(canvas);
 
@@ -177,9 +209,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawBitmap(this.background, 0, 0, null);
 
             this.mainCharacter.draw(canvas);
-            this.skeleton.draw(canvas);
+            //this.skeleton.draw(canvas);
             this.chest.draw(canvas);
+            this.hitButton.draw(canvas);
 
+            for (Skeleton skeleton: this.skeletons) {
+                skeleton.draw(canvas);
+            }
 
             for (Heart h : health) {
                 h.draw(canvas);
@@ -212,10 +248,20 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
                 /* User touched PAUSE button */
                 if (gameButton.isPressed(x, y)) {
-                    System.out.println("Button pressed\n");
-
                     paused = true;
 
+                /* User touched HIT button */
+                } else if (hitButton.isPressed(x, y)) {
+
+                    if (!skeletons.isEmpty()) {
+                        for (Skeleton skeleton: this.skeletons) {
+
+                           if (Math.abs(this.mainCharacter.getX() - skeleton.getX()) <= 15 || Math.abs(this.mainCharacter.getY() - skeleton.getY()) <= 15)
+                                skeletons.remove(skeleton);
+                                break;
+                        }
+                    }
+                /* Switch to the game regime */
                 } else if (paused && resumeGameButton.isPressed(x, y)) {
                     paused = !paused;
 
@@ -238,8 +284,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                     this.mainCharacter.setStopped_X(x);
                     this.mainCharacter.setStopped_Y(y);
 
-
-                    //this.skeleton.setMovingVector(movingVectorX1, movingVectorY1);
                 }
                 return true;
             }

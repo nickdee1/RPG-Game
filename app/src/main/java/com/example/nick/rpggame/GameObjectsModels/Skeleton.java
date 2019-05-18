@@ -8,8 +8,6 @@ public class Skeleton extends ModelCharacter {
     private MainCharacter mainCharacter;
 
 
-
-
     public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
         super(gameSurface, image, x, y);
         this.mainCharacter = mainCharacter;
@@ -25,6 +23,13 @@ public class Skeleton extends ModelCharacter {
         int movingVectorY = mainCharY - this.getY();
 
         setMovingVector(movingVectorX, movingVectorY);
+
+        hitMainCharacter();
+    }
+
+    private void hitMainCharacter() {
+        if (Math.abs(this.mainCharacter.getX() - this.getX()) <= 15 || Math.abs(this.mainCharacter.getY() - this.getY()) <= 15)
+            mainCharacter.setHealth(mainCharacter.getHealth() - 1);
     }
 
     @Override

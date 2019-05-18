@@ -17,4 +17,8 @@ public class MainCharacter extends ModelCharacter {
     public int getHealth() {
         return health;
     }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
 }

@@ -28,8 +28,12 @@ public class GameThread extends Thread {
                 canvas = this.surfaceHolder.lockCanvas();
 
                 synchronized (canvas) {
-                    this.gameSurface.update();
-                    this.gameSurface.draw(canvas);
+
+
+
+                        this.gameSurface.update();
+                        this.gameSurface.draw(canvas);
+
                 }
             } catch(Exception ignored) {
 
