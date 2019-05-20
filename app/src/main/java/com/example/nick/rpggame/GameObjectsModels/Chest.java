@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 public class Chest extends GameObject {
 
     private Bitmap chestImage;
+    private int healingPotionCount = 1;
 
     public Chest(Bitmap image, int x, int y) {
         super(image, x, y);

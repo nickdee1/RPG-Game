@@ -29,8 +29,6 @@ public class GameThread extends Thread {
 
                 synchronized (canvas) {
 
-
-
                         this.gameSurface.update();
                         this.gameSurface.draw(canvas);
 

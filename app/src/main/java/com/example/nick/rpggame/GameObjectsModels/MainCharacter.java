@@ -10,7 +10,7 @@ public class MainCharacter extends ModelCharacter {
     public MainCharacter(GameSurface gameSurface, Bitmap image, int x, int y) {
         super(gameSurface, image, x, y);
 
-        this.health = 3;
+        this.health = 5;
     }
 
 

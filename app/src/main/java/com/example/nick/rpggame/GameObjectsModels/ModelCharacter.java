@@ -5,12 +5,9 @@ import android.graphics.Canvas;
 import com.example.nick.rpggame.GameSurface;
 
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Blueprint for any character in game
  * */
-
 public class ModelCharacter extends Character {
 
     private static final int ROW_TOP_TO_BOTTOM = 0;
@@ -65,7 +62,6 @@ public class ModelCharacter extends Character {
     /**
      * Returns current Bitmap image of character's movement
      * */
-
     private Bitmap getCurrentMoveBitmap()  {
         Bitmap[] bitmaps = this.getMoveBitmaps();
         assert bitmaps != null;
@@ -110,7 +106,6 @@ public class ModelCharacter extends Character {
     /**
      * Draw character on surface with his current movement image
      * */
-
     public void draw(Canvas canvas)  {
         Bitmap bitmap = this.getCurrentMoveBitmap();
         canvas.drawBitmap(bitmap, x, y, null);

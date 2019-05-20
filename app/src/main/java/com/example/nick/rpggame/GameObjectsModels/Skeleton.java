@@ -6,6 +6,8 @@ import com.example.nick.rpggame.GameSurface;
 public class Skeleton extends ModelCharacter {
 
     private MainCharacter mainCharacter;
+    private long hitTime = 0;
+
 
 
     public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
@@ -15,6 +17,10 @@ public class Skeleton extends ModelCharacter {
         VELOCITY = (float) 0.4;
     }
 
+
+    /**
+     * Skeleton moves towards main character setting his moving vector due to X/Y position of main character
+     * */
     private void setMovingVectorToMainChar() {
         int mainCharX = this.mainCharacter.getX();
         int mainCharY = this.mainCharacter.getY();
@@ -27,11 +33,21 @@ public class Skeleton extends ModelCharacter {
         hitMainCharacter();
     }
 
+    /**
+     * Hits main character only within radius of 5 pixels and after 1 sec after last hit
+     * */
     private void hitMainCharacter() {
-        if (Math.abs(this.mainCharacter.getX() - this.getX()) <= 15 || Math.abs(this.mainCharacter.getY() - this.getY()) <= 15)
+        if ((Math.abs(this.mainCharacter.getX() - this.getX()) < 5 && Math.abs(this.mainCharacter.getY() - this.getY()) < 5)
+                && (System.currentTimeMillis() - hitTime > 1000)) {
             mainCharacter.setHealth(mainCharacter.getHealth() - 1);
+            hitTime = System.currentTimeMillis();
+        }
     }
 
+
+    /**
+     * Updates skeleton's movement
+     * */
     @Override
     public void updateCharacterMovement() {
         super.updateCharacterMovement();
