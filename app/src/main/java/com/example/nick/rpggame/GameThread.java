@@ -14,15 +14,27 @@ public class GameThread extends Thread {
 
     private boolean running;
 
+    /**
+     * Game thread initialization
+     * @params:
+     * gameSurface - surface which handles game actions
+     * surfaceHolder - game surface holder
+     * */
     public GameThread(GameSurface gameSurface, SurfaceHolder surfaceHolder) {
         this.gameSurface = gameSurface;
         this.surfaceHolder = surfaceHolder;
     }
 
+    /**
+     * Makes thread run
+     * */
     public void setRunning(boolean running) {
         this.running = running;
     }
 
+    /**
+     * Functionality during the run of thread
+     * */
     public void run() {
         while (running) {
 

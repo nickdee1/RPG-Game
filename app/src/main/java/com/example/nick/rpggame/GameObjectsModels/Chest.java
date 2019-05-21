@@ -1,10 +1,13 @@
 package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import com.example.nick.rpggame.GameButton;
 
+
+/**
+ * Class for chest in game
+ * */
 public class Chest extends GameObject {
 
 
@@ -19,6 +22,16 @@ public class Chest extends GameObject {
     private int charsX;
     private int charsY;
 
+
+    /**
+     * Chest initialization
+     * @params:
+     * image - Bitmap image of chest
+     * viewImage - Bitmap image of view after opening the chest
+     * closeButtonBitmap - image of closeButton used to close chestView
+     * healingPotion - Bitmap image of potion
+     * x, y - coordinates of chest on canvas
+     * */
     public Chest(Bitmap image, Bitmap viewImage, Bitmap closeButtonBitmap, Bitmap healingPotion, int x, int y) {
         super(image, x, y);
 
@@ -30,7 +43,9 @@ public class Chest extends GameObject {
 
     }
 
-
+    /**
+     * Draw chest and it's views on canvas
+     * */
     public void draw(Canvas canvas) {
         canvas.drawBitmap(chestImage, x, y, null);
         chestViewImage = Bitmap.createScaledBitmap(chestViewImage, 800, 300, false);
@@ -44,45 +59,65 @@ public class Chest extends GameObject {
 
     }
 
+
+    /**
+     * Checks if character opened chest
+     * @params:
+     * touchedX, touchedY - coordinates of user's last screen tap
+     * */
     public boolean characterOpenedChest(int touchedX, int touchedY) {
-
-        System.out.println(this.getX());
-
-        if ((Math.abs(charsX - this.getX()) < 70 && Math.abs(charsY - this.getY()) < 70) && (touchedX <= x + chestImage.getWidth() && touchedX >= x) && (touchedY <= y + chestImage.getHeight() && touchedY >= y)) {
-            return true;
-        }
-        return false;
+        return (Math.abs(charsX - this.getX()) < 70 && Math.abs(charsY - this.getY()) < 70) && (touchedX <= x + chestImage.getWidth() && touchedX >= x) && (touchedY <= y + chestImage.getHeight() && touchedY >= y);
     }
 
+    /**
+     * Checks if character closed chest
+     * @params:
+     * touchedX, touchedY - coordinates of user's last screen tap
+     * */
     public boolean characterClosedChest(int touchedX, int touchedY) {
-
-        if (closeButton.isPressed(touchedX, touchedY)) return true;
-        return false;
+        return closeButton.isPressed(touchedX, touchedY);
     }
 
+    /**
+     * Checks if character took item from chest
+     * @params:
+     * touchedX, touchedY - coordinates of user's last screen tap
+     * */
     public boolean characterTookPotion(int touchedX, int touchedY) {
-        if (healingPotion.isPressed(touchedX, touchedY)) return true;
-        return false;
+        return healingPotion.isPressed(touchedX, touchedY);
     }
 
+    /**
+     * Gets number of potions chest contains
+     * */
     public int getHealingPotionCount() {
         return healingPotionCount;
     }
 
+    /**
+     * Add potion to the chest
+     * */
     public void setHealingPotionCount(int healingPotionCount) {
         this.healingPotionCount = healingPotionCount;
     }
 
+    /**
+     * Checks chest's current state (opened/not)
+     * */
     public boolean isOpened() {
         return opened;
     }
 
-
+    /**
+     * Open/close chest
+     * */
     public void setOpened(boolean opened) {
         this.opened = opened;
     }
 
-
+    /**
+     * Methods used to check main character's current state on surface
+     * */
     public void setCharsX(int charsX) {
         this.charsX = charsX;
     }

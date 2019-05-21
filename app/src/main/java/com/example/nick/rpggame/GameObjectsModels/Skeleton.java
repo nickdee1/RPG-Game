@@ -13,6 +13,14 @@ public class Skeleton extends ModelCharacter {
     private long hitTime = 0;
 
 
+    /**
+     * Skeleton initialization
+     * @params:
+     * gameSurface - surface that handles all graphic changes in game
+     * image - image of character
+     * x, y - coordinates on canvas
+     * mainCharacter - player's character
+     * */
     public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
         super(gameSurface, image, x, y);
         this.mainCharacter = mainCharacter;

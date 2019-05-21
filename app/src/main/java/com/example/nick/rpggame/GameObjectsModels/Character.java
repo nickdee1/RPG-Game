@@ -18,6 +18,15 @@ public abstract class Character {
     int x;
     int y;
 
+
+    /**
+     * Character initialization
+     * @params:
+     * image - image would be displayed on screen
+     * rowCount - count of rows in image (used for animation)
+     * columnCount - count of columns in image (used for animation)
+     * x, y - location of character after initialization
+     * */
     public Character(Bitmap image, int rowCount, int columnCount, int x, int y) {
         this.image = image;
         this.rowCount = rowCount;
@@ -34,6 +43,8 @@ public abstract class Character {
 
     /**
      * Creates character's model from PNG image
+     * @params:
+     * row, column - values used for character image creation at certain row and column
      * */
     public Bitmap createImageAt(int row, int column) {
         return Bitmap.createBitmap(image, column*characterWidth, row*characterWidth, characterWidth, characterHeight);

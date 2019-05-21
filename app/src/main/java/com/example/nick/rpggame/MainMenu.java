@@ -10,6 +10,11 @@ public class MainMenu {
 
     private Bitmap mainMenuBackground;
 
+    /**
+     * Main menu initialization
+     * @params:
+     * mainMenuBackground - image of main menu
+     * */
     public MainMenu(Bitmap mainMenuBackground) {
         this.mainMenuBackground = mainMenuBackground;
     }

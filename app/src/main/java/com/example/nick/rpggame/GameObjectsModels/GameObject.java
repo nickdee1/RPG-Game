@@ -15,6 +15,13 @@ public abstract class GameObject {
     private int objectWidth;
     private int objectHeight;
 
+
+    /**
+     * Game object initialization
+     * @params:
+     * image - image of game object
+     * x, y - coordinates of creation on canvas
+     * */
     public GameObject(Bitmap image, int x, int y) {
         this.image = image;
         this.x = x;
@@ -25,19 +32,32 @@ public abstract class GameObject {
     }
 
 
+    /**
+     * Get X coordinate of object
+     * */
     public int getX() {
         return x;
     }
 
+    /**
+     * Get Y coordinate of object
+     * */
     public int getY() {
         return y;
     }
 
-    public int getObjectWidth() {
+
+    /**
+     * Get width of image of object
+     * */
+    private int getObjectWidth() {
         return objectWidth;
     }
 
-    public int getObjectHeight() {
+    /**
+     * Get height of image of object
+     * */
+    private int getObjectHeight() {
         return objectHeight;
     }
 

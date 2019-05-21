@@ -6,7 +6,7 @@ import com.example.nick.rpggame.GameObjectsModels.GameObject;
 
 
 /**
- * Class of any button in game
+ * Blueprint of any button in game
  * */
 public class GameButton extends GameObject {
 
@@ -15,6 +15,12 @@ public class GameButton extends GameObject {
     private int height;
 
 
+    /**
+     * Game button initialization
+     * @params:
+     * image - image of button
+     * x, y - coordinates of button
+     * */
     public GameButton(Bitmap image, int x, int y) {
         super(image, x, y);
 
@@ -25,6 +31,8 @@ public class GameButton extends GameObject {
 
     /**
      * Draw button on surface
+     * @params:
+     * canvas - game canvas
      * */
     public void draw(Canvas canvas) {
         canvas.drawBitmap(buttonBitmap, x, y, null);
@@ -32,6 +40,8 @@ public class GameButton extends GameObject {
 
     /**
      * Return true if user pressed button, false otherwise
+     * @params:
+     * touchedX, touchedY - coordinates of user's last screen tap
      * */
     public boolean isPressed(int touchedX, int touchedY) {
         return (touchedX <= x + this.width && touchedX >= x) && (touchedY <= y + this.height && touchedY >= y);

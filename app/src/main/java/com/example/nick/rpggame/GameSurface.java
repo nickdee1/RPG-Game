@@ -38,8 +38,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
     /* Game indicators */
-    private List<Heart> health = new ArrayList<>();
-    private List<Heart> armor = new ArrayList<>();
+    private List<HealthIndicator> health = new ArrayList<>();
+    private List<HealthIndicator> armor = new ArrayList<>();
 
     /* Game images */
     private Bitmap background;
@@ -69,6 +69,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Game Images initialization after launching the game
+     * @params:
+     * holder - game surface holder
      **/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -115,11 +117,18 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
+    /**
+     * Actions after surface is changed
+     * */
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
 
-
+    /**
+     * Actions after surface destroyed
+     * @params:
+     * holder - game surface holder
+     * */
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
@@ -180,6 +189,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Updates objects' place on canvas
+     * @params:
+     * canvas - game canvas
      * */
     @Override
     public void draw(Canvas canvas) {
@@ -206,11 +217,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
             /* Draw health and armor indicators */
-            for (Heart h : health) {
+            for (HealthIndicator h : health) {
                 h.draw(canvas);
             }
 
-            for (Heart a : armor) {
+            for (HealthIndicator a : armor) {
                 a.draw(canvas);
             }
 
@@ -329,29 +340,27 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    /**
-     * Methods initialize health and armor of character at the
-     * beginning of game
-     **/
+
+    /* Methods initialize health and armor of character at the
+     * beginning of game */
     private void characterHealthUpdate() {
 
         this.health.clear();
         for (int i = 0; i < this.mainCharacter.getHealth(); i ++) {
-            this.health.add(new Heart(heartBitmap, 50 + i*120, 50));
+            this.health.add(new HealthIndicator(heartBitmap, 50 + i*120, 50));
         }
     }
+
     private void characterArmorUpdate() {
 
         this.armor.clear();
         for (int i = 0; i < this.mainCharacter.getArmor(); i++) {
-            this.armor.add(new Heart(Bitmap.createScaledBitmap(armorBitmap, 120, 120, false), 50 + i * 120, 130));
+            this.armor.add(new HealthIndicator(Bitmap.createScaledBitmap(armorBitmap, 120, 120, false), 50 + i * 120, 130));
         }
     }
 
 
-    /**
-     * Mob spawn in the game
-     * */
+    /* Mob spawn in the game */
     private void mobsInit(int numberOfNPC) {
         for (int i = 0; i < numberOfNPC; i++) {
             this.skeletons.add(new Skeleton(this, skeletonBitmap, 1000 + i*30, 170 + i*43, this.mainCharacter));
@@ -359,9 +368,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    /**
-     * Methods handle actions after game starts or finishes
-     * */
+    /* Methods handle actions after game starts or finished */
     private void gameStarted() {
         this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
         skeletons.clear();

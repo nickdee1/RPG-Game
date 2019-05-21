@@ -20,6 +20,8 @@ public class ModelCharacter extends Character {
 
     private boolean stopped = false;
 
+
+    /* Arrays with bitmaps of character */
     private Bitmap[] leftToRights;
     private Bitmap[] rightToLefts;
     private Bitmap[] topToBottoms;
@@ -33,11 +35,18 @@ public class ModelCharacter extends Character {
     private int stopped_X;
     private int stopped_Y;
 
-
     private long lastDrawNanoTime = -1;
 
     private GameSurface gameSurface;
 
+
+    /**
+     * Blueprint for character in game initialization
+     * @params:
+     * gameSurface - surface that handles all graphic changes in game
+     * image - image of character on canvas
+     * x, y - coordinates on canvas
+     * */
     public ModelCharacter(GameSurface gameSurface, Bitmap image, int x, int y) {
         super(image, 4, 3, x, y);
 
@@ -58,18 +67,15 @@ public class ModelCharacter extends Character {
 
     /* Animation handling methods */
 
-    /**
-     * Returns current Bitmap image of character's movement
-     * */
+
+     /* Returns current Bitmap image of character's movement */
     private Bitmap getCurrentMoveBitmap()  {
         Bitmap[] bitmaps = this.getMoveBitmaps();
         assert bitmaps != null;
         return bitmaps[this.colUsing];
     }
 
-    /**
-     * Returns array of char's movements
-     * */
+    /* Returns array of char's movements */
     private Bitmap[] getMoveBitmaps()  {
         switch (rowUsing)  {
             case ROW_BOTTOM_TO_TOP:
@@ -85,10 +91,8 @@ public class ModelCharacter extends Character {
         }
     }
 
-    /**
-     * Used for unblocking/blocking char's animation due to his movement
-     * (if char is running, animation is enabled, otherwise - no)
-     * */
+    /* Used for unblocking/blocking char's animation due to his movement
+     * (if char is running, animation is enabled, otherwise - no) */
     private void animationEnabled() {
         if (isSetStopped()) {
             this.colUsing = 1;
@@ -102,6 +106,7 @@ public class ModelCharacter extends Character {
         }
     }
 
+    /* Change char's model depending on his moving vector */
     private void changeCharacterModel() {
         if (movingVectorY > 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) this.rowUsing = ROW_TOP_TO_BOTTOM;
          else if (movingVectorY < 0 && Math.abs(movingVectorX) < Math.abs(movingVectorY)) this.rowUsing = ROW_BOTTOM_TO_TOP;
@@ -111,6 +116,8 @@ public class ModelCharacter extends Character {
 
     /**
      * Draw character on surface with his current movement image
+     * @params:
+     * canvas - canvas on which game is drawn
      * */
     public void draw(Canvas canvas)  {
         Bitmap bitmap = this.getCurrentMoveBitmap();
@@ -156,9 +163,7 @@ public class ModelCharacter extends Character {
     }
 
 
-    /**
-     * Calculates new position of character while running
-     * */
+    /* Calculates new position of character while running */
     private void run_mov() {
 
         if (movingVectorX > 0 || movingVectorY > 0) setStopped(false);
@@ -176,12 +181,20 @@ public class ModelCharacter extends Character {
 
     }
 
-
+    /**
+     * Set moving vector to the point
+     * @params:
+     * movingVectorX, movingVectorY - moving vectors
+     * */
     public void setMovingVector(int movingVectorX, int movingVectorY)  {
         this.movingVectorX = movingVectorX;
         this.movingVectorY = movingVectorY;
     }
 
+
+    /**
+     * Set character stopped
+     * */
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }
@@ -190,10 +203,20 @@ public class ModelCharacter extends Character {
         return stopped;
     }
 
+    /**
+     * Set stop point on X
+     * @params:
+     * stopped_X - x point of stop
+     * */
     public void setStopped_X(int stopped_X) {
         this.stopped_X = stopped_X;
     }
 
+    /**
+     * Set stop point on Y
+     * @params:
+     * stopped_Y - y point of stop
+     * */
     public void setStopped_Y(int stopped_Y) {
         this.stopped_Y = stopped_Y;
     }
