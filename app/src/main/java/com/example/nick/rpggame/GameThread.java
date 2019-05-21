@@ -1,8 +1,12 @@
 package com.example.nick.rpggame;
 
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
+/**
+ * Thread handles all the game events
+ * */
 public class GameThread extends Thread {
 
     private GameSurface gameSurface;
@@ -23,18 +27,17 @@ public class GameThread extends Thread {
         while (running) {
 
             Canvas canvas = null;
-
             try {
                 canvas = this.surfaceHolder.lockCanvas();
 
                 synchronized (canvas) {
-
                         this.gameSurface.update();
                         this.gameSurface.draw(canvas);
 
                 }
-            } catch(Exception ignored) {
 
+            } catch(Exception ignored) {
+                Log.v("Game Thread", "Unable to update game");
             } finally {
                 if(canvas!=null) {
                     this.surfaceHolder.unlockCanvasAndPost(canvas);
@@ -42,7 +45,6 @@ public class GameThread extends Thread {
             }
         }
     }
-
 
 
 }

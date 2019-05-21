@@ -3,6 +3,10 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+
+/**
+ * Is drawn after NPC dies
+ * */
 public class Tomb extends GameObject {
 
     private Bitmap tombImage;

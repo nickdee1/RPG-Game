@@ -6,10 +6,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.MotionEvent;
 import com.example.nick.rpggame.GameObjectsModels.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import android.util.Log;
 
 /**
  * The GameSurface initializes and displays every action that
@@ -17,52 +16,53 @@ import java.util.List;
  * */
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
+
     private GameThread gameThread;
 
 
-
+    /* Game Buttons */
     private MainMenu mainMenu;
     private GameButton playGameButton;
+    private GameButton gameButton;
+    private GameButton hitButton;
+    private GameButton resumeGameButton;
+    private GameButton toMainMenuButton;
+    private GameButton useHealingPotion;
+
 
     /* Game objects */
     private MainCharacter mainCharacter;
-    private Skeleton skeleton;
+    private List<Skeleton> skeletons = new ArrayList<>();
+    private List<Tomb> tombs = new ArrayList<>();
     private Chest chest;
 
-    private List<Skeleton> skeletons = new ArrayList<Skeleton>();
 
-    /* Game components */
+    /* Game indicators */
+    private List<Heart> health = new ArrayList<>();
+    private List<Heart> armor = new ArrayList<>();
+
+    /* Game images */
     private Bitmap background;
-
-    private List<Heart> health = new ArrayList<Heart>();
-    private Bitmap heartBitmap;
-
-    private GameButton gameButton;
-    private GameButton hitButton;
-
-    private GameButton resumeGameButton;
-    private GameButton toMainMenuButton;
-
     private Bitmap pauseBackground;
+    private Bitmap heartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
+    private Bitmap armorBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.armor_shield);
+    private Bitmap gameOver = BitmapFactory.decodeResource(this.getResources(), R.drawable.game_over);
+    private Bitmap skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
+    private Bitmap knightBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.knight);
+    private Bitmap tombBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.tomb);
+    private Bitmap healingPotionBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.healing_potion);
 
 
-    private Bitmap skeletonBitmap;
-    private Bitmap knightBitmap;
-
+    /* Game switchers */
     private boolean paused = false;
     private boolean started = false;
-
-
-    private List<Tomb> tombs = new ArrayList<Tomb>();
-    private Bitmap tombBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.tomb);
-
     private int numberOfNPC = 1;
+
+
 
     public GameSurface(Context context) {
         super(context);
-
         this.setFocusable(true);
-
         this.getHolder().addCallback(this);
     }
 
@@ -74,61 +74,45 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
 
 
-        /* Game Menu view initialization */
+        /* Images are used in game */
         Bitmap mainMenuBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.main_menu);
-        mainMenuBitmap = Bitmap.createScaledBitmap(mainMenuBitmap, 1900, 1080, false);
-        this.mainMenu = new MainMenu(mainMenuBitmap);
-
         Bitmap playButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play_button);
-        playButtonBitmap = Bitmap.createScaledBitmap(playButtonBitmap, 650, 200, false);
-        this.playGameButton = new GameButton(playButtonBitmap, 625, 445);
-
-        this.mainMenu.setPlayButton(playGameButton);
-
-
-        skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
-        knightBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.knight);
-        this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
-
-
-        this.heartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
         Bitmap chest = BitmapFactory.decodeResource(this.getResources(), R.drawable.chest);
-        this.chest = new Chest(chest, 700, 300);
-
-
-        /* Game components images initialization */
+        Bitmap chestView = BitmapFactory.decodeResource(this.getResources(), R.drawable.chest_view_image);
+        Bitmap closeButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.close_buttom);
         Bitmap backgroundBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
         Bitmap pauseBackgroundBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause_backgound);
+        Bitmap pauseButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause_button);
+        Bitmap resumeGameButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.resume_button);
+        Bitmap toMainMenuButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.back_to_menu_button);
+        Bitmap hitButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.hit_button);
+
+
+        /* Game subviews and backgrounds initialization */
+        this.mainMenu = new MainMenu(Bitmap.createScaledBitmap(mainMenuBitmap, 1900, 1080, false));
+        this.chest = new Chest(chest, chestView, closeButtonBitmap, healingPotionBitmap,700, 300);
         this.background = Bitmap.createScaledBitmap(backgroundBitmap, 1900, 1080, false);
         this.pauseBackground = Bitmap.createScaledBitmap(pauseBackgroundBitmap, 1130, 450, false);
 
 
-        Bitmap pauseButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause_button);
-        pauseButtonBitmap = Bitmap.createScaledBitmap(pauseButtonBitmap, 150, 150, false);
-        this.gameButton = new GameButton(pauseButtonBitmap, 1620, 10);
+        /* Main character initialization */
+        this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
 
 
-        Bitmap resumeGameButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.resume_button);
-        resumeGameButtonBitmap = Bitmap.createScaledBitmap(resumeGameButtonBitmap, 386, 116, false);
-        this.resumeGameButton = new GameButton(resumeGameButtonBitmap, 750, 450);
+        /* Game buttons initialization */
+        this.gameButton = new GameButton(Bitmap.createScaledBitmap(pauseButtonBitmap, 150, 150, false), 1620, 10);
+        this.playGameButton = new GameButton(Bitmap.createScaledBitmap(playButtonBitmap, 650, 200, false), 625, 445);
+        this.resumeGameButton = new GameButton(Bitmap.createScaledBitmap(resumeGameButtonBitmap, 386, 116, false), 750, 450);
+        this.toMainMenuButton = new GameButton(Bitmap.createScaledBitmap(toMainMenuButtonBitmap, 386, 116, false), 750, 590);
+        this.hitButton = new GameButton(Bitmap.createScaledBitmap(hitButtonBitmap, 200, 200, false), 1530, 840);
+        this.useHealingPotion = new GameButton(Bitmap.createScaledBitmap(healingPotionBitmap, 360, 360, false), 0, 790);
 
 
-        Bitmap toMainMenuButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.back_to_menu_button);
-        toMainMenuButtonBitmap = Bitmap.createScaledBitmap(toMainMenuButtonBitmap, 386, 116, false);
-        this.toMainMenuButton = new GameButton(toMainMenuButtonBitmap, 750, 590);
-
-
-        Bitmap hitButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.hit_button);
-        hitButtonBitmap = Bitmap.createScaledBitmap(hitButtonBitmap, 200, 200, false);
-        this.hitButton = new GameButton(hitButtonBitmap, 1530, 840);
-
-
-
+        /* Make thread work after surface creation */
         this.gameThread = new GameThread(this, holder);
         this.gameThread.setRunning(true);
         this.gameThread.start();
     }
-
 
 
     @Override
@@ -156,7 +140,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
         if (started) {
-            if (!paused) {
+            if (!paused && !chest.isOpened()) {
 
                 for (Skeleton skeleton: this.skeletons) {
                     skeleton.updateCharacterMovement();
@@ -164,6 +148,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
                 mainCharacter.updateCharacterMovement();
                 characterHealthUpdate();
+                characterArmorUpdate();
+
+                chest.setCharsX(mainCharacter.getX());
+                chest.setCharsY(mainCharacter.getY());
+
 
                 if (skeletons.isEmpty()) {
                     numberOfNPC += 1;
@@ -171,7 +160,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                 }
 
 
+                if (numberOfNPC % 2 == 0) chest.setHealingPotionCount(1);
 
+                if (mainCharacter.isDead()) gameFinished();
 
             } else {
                 try {
@@ -195,18 +186,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         if (!started) {
-
             this.mainMenu.draw(canvas);
             this.playGameButton.draw(canvas);
-
-
         } else {
 
             canvas.drawBitmap(this.background, 0, 0, null);
 
-            this.chest.draw(canvas);
-            this.hitButton.draw(canvas);
-
+            /* Draw tomb on place where skeleton died */
             if (!tombs.isEmpty()) {
                 for (Tomb tomb: tombs) {
                     tomb.draw(canvas);
@@ -218,20 +204,33 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                 skeleton.draw(canvas);
             }
 
+
+            /* Draw health and armor indicators */
             for (Heart h : health) {
                 h.draw(canvas);
             }
 
+            for (Heart a : armor) {
+                a.draw(canvas);
+            }
 
+            if (mainCharacter.getHealingPotionCount() > 0) this.useHealingPotion.draw(canvas);
+
+            this.hitButton.draw(canvas);
+            this.chest.draw(canvas);
+
+            /* If main char is dead, GameOver is drawn */
+            if (mainCharacter.isDead()) canvas.drawBitmap(Bitmap.createScaledBitmap(gameOver, 1920, 1080, false), 0,0,null);
+
+
+            /* Draw pause menu subview */
             if (paused) {
                 canvas.drawBitmap(pauseBackground, 395, 315, null);
-                this.resumeGameButton.draw(canvas);
+                if (!mainCharacter.isDead()) this.resumeGameButton.draw(canvas);
                 this.toMainMenuButton.draw(canvas);
             } else this.gameButton.draw(canvas);
         }
     }
-
-
 
 
     /**
@@ -242,51 +241,72 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
 
-            int x =  (int)event.getX();
+            int x = (int)event.getX();
             int y = (int)event.getY();
 
 
+            /* Game starts after user touched PLAY button */
             if (!started && playGameButton.isPressed(x, y)) {
                 started = true;
                 return true;
-
 
             } else {
 
                 /* User touched PAUSE button */
                 if (gameButton.isPressed(x, y)) {
                     paused = true;
+                    Log.v("onTouchEventMethod", "PAUSE button pressed");
 
                 /* User touched HIT button */
                 } else if (hitButton.isPressed(x, y)) {
 
-                    System.out.println(tombs.size());
-
+                        /*  */
                     if (!skeletons.isEmpty()) {
-                        for (Skeleton skeleton: this.skeletons) {
+                        for (Skeleton skeleton : this.skeletons) {
 
-                           if (Math.abs(this.mainCharacter.getX() - skeleton.getX()) <= 20 &&
-                                   Math.abs(this.mainCharacter.getY() - skeleton.getY()) <= 20) {
+                            if (Math.abs(this.mainCharacter.getX() - skeleton.getX()) <= 20 &&
+                                    Math.abs(this.mainCharacter.getY() - skeleton.getY()) <= 20) {
 
                                 tombs.add(new Tomb(Bitmap.createScaledBitmap(tombBitmap, 100, 110, false),
                                         skeleton.getX(), skeleton.getY()));
 
-                                System.out.printf("Is empty", tombs.isEmpty());
                                 skeletons.remove(skeleton);
+                                Log.v("onTouchEventMethod", "Skeleton killed by user");
                                 break;
-                           }
+                            }
 
                         }
                     }
 
+                    /* Chest interaction */
+                } else if (chest.characterOpenedChest(x, y)) {
+                    chest.setOpened(true);
+                    Log.v("onTouchEventMethod", "User opened chest");
+
+                } else if (chest.characterClosedChest(x, y) && chest.isOpened()) {
+                    chest.setOpened(false);
+                    Log.v("onTouchEventMethod", "User closed chest");
+
+                } else if (chest.isOpened() && chest.characterTookPotion(x, y)) {
+                    chest.setHealingPotionCount(chest.getHealingPotionCount() - 1);
+                    mainCharacter.setHealingPotionCount(mainCharacter.getHealingPotionCount() + 1);
+                    Log.v("onTouchEventMethod", "User took healing potion");
+
+
+                } else if (!mainCharacter.isDead() && useHealingPotion.isPressed(x, y) && mainCharacter.getHealingPotionCount() > 0) {
+                    mainCharacter.setHealth(mainCharacter.getHealth() + 1);
+                    mainCharacter.setHealingPotionCount(mainCharacter.getHealingPotionCount() - 1);
+                    Log.v("onTouchEventMethod", "Main character was healed");
+
                 /* Switch to the game regime */
-                } else if (paused && resumeGameButton.isPressed(x, y)) {
+                } else if (paused && resumeGameButton.isPressed(x, y) && !mainCharacter.isDead()) {
                     paused = !paused;
 
                 /* Switch to MENU regime */
                 } else if (paused && toMainMenuButton.isPressed(x, y)) {
                     started = false;
                     paused = false;
+                    Log.v("onTouchEventMethod", "Went to the main menu");
 
                 /* Main character goes to touched point */
                 } else if (!paused) {
@@ -295,7 +315,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
                     final int movingVectorX = x - this.mainCharacter.getX();
                     final int movingVectorY = y - this.mainCharacter.getY();
-
 
                     this.mainCharacter.setMovingVector(movingVectorX, movingVectorY);
 
@@ -311,7 +330,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
 
     /**
-     * Methods initializes health of character at the
+     * Methods initialize health and armor of character at the
      * beginning of game
      **/
     private void characterHealthUpdate() {
@@ -321,22 +340,43 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             this.health.add(new Heart(heartBitmap, 50 + i*120, 50));
         }
     }
+    private void characterArmorUpdate() {
+
+        this.armor.clear();
+        for (int i = 0; i < this.mainCharacter.getArmor(); i++) {
+            this.armor.add(new Heart(Bitmap.createScaledBitmap(armorBitmap, 120, 120, false), 50 + i * 120, 130));
+        }
+    }
 
 
+    /**
+     * Mob spawn in the game
+     * */
     private void mobsInit(int numberOfNPC) {
         for (int i = 0; i < numberOfNPC; i++) {
             this.skeletons.add(new Skeleton(this, skeletonBitmap, 1000 + i*30, 170 + i*43, this.mainCharacter));
         }
     }
 
+
+    /**
+     * Methods handle actions after game starts or finishes
+     * */
     private void gameStarted() {
         this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
         skeletons.clear();
         tombs.clear();
         numberOfNPC = 1;
+        chest.setHealingPotionCount(1);
         mobsInit(numberOfNPC);
         characterHealthUpdate();
+        characterArmorUpdate();
     }
 
+    private void gameFinished() {
+        skeletons.clear();
+        tombs.clear();
+        numberOfNPC = 0;
+    }
 
 }

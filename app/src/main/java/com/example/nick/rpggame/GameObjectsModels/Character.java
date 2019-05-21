@@ -5,16 +5,12 @@ import android.graphics.Bitmap;
 /**
  * Interface for any character in game
  **/
-
 public abstract class Character {
 
     protected Bitmap image;
 
     final int rowCount;
     final int columnCount;
-
-    private final int IMAGE_WIDTH;
-    private final int IMAGE_HEIGHT;
 
     final int characterWidth;
     final int characterHeight;
@@ -29,11 +25,11 @@ public abstract class Character {
         this.x = x;
         this.y = y;
 
-        this.IMAGE_HEIGHT = image.getHeight();
-        this.IMAGE_WIDTH = image.getWidth();
+        int IMAGE_HEIGHT = image.getHeight();
+        int IMAGE_WIDTH = image.getWidth();
 
-        this.characterHeight = this.IMAGE_HEIGHT / rowCount;
-        this.characterWidth = this.IMAGE_WIDTH / columnCount;
+        this.characterHeight = IMAGE_HEIGHT / rowCount;
+        this.characterWidth = IMAGE_WIDTH / columnCount;
     }
 
     /**

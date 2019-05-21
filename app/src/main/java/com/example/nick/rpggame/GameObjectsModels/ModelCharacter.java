@@ -58,7 +58,6 @@ public class ModelCharacter extends Character {
 
     /* Animation handling methods */
 
-
     /**
      * Returns current Bitmap image of character's movement
      * */
@@ -68,6 +67,9 @@ public class ModelCharacter extends Character {
         return bitmaps[this.colUsing];
     }
 
+    /**
+     * Returns array of char's movements
+     * */
     private Bitmap[] getMoveBitmaps()  {
         switch (rowUsing)  {
             case ROW_BOTTOM_TO_TOP:
@@ -83,6 +85,10 @@ public class ModelCharacter extends Character {
         }
     }
 
+    /**
+     * Used for unblocking/blocking char's animation due to his movement
+     * (if char is running, animation is enabled, otherwise - no)
+     * */
     private void animationEnabled() {
         if (isSetStopped()) {
             this.colUsing = 1;
@@ -112,7 +118,6 @@ public class ModelCharacter extends Character {
         this.lastDrawNanoTime = System.nanoTime();
     }
 
-    /* Movement handling methods */
 
     /**
      * Method handles character's movement
@@ -130,8 +135,7 @@ public class ModelCharacter extends Character {
         run_mov();
 
 
-
-        //Character stops if touches the edge of screen
+        /* Stop character when touches the edges of screen */
         if(this.x < 0)  {
             this.x = 0;
             this.movingVectorX = 0;
@@ -145,13 +149,16 @@ public class ModelCharacter extends Character {
             this.movingVectorY = 0;
         } else if(this.y > this.gameSurface.getHeight() - characterHeight)  {
             this.y = this.gameSurface.getHeight() - characterHeight;
-            this.movingVectorY = 0 ;
+            this.movingVectorY = 0;
         }
 
         changeCharacterModel();
     }
 
 
+    /**
+     * Calculates new position of character while running
+     * */
     private void run_mov() {
 
         if (movingVectorX > 0 || movingVectorY > 0) setStopped(false);
@@ -162,9 +169,8 @@ public class ModelCharacter extends Character {
 
         float distance = VELOCITY * deltaTime;
 
-        double movingVectorLength = Math.sqrt(movingVectorX* movingVectorX + movingVectorY*movingVectorY);
+        double movingVectorLength = Math.sqrt(movingVectorX * movingVectorX + movingVectorY * movingVectorY);
 
-        // Calculate new position of the game character.
         this.x = x +  (int)(distance* movingVectorX / movingVectorLength);
         this.y = y +  (int)(distance* movingVectorY / movingVectorLength);
 
@@ -183,7 +189,6 @@ public class ModelCharacter extends Character {
     private boolean isSetStopped() {
         return stopped;
     }
-
 
     public void setStopped_X(int stopped_X) {
         this.stopped_X = stopped_X;

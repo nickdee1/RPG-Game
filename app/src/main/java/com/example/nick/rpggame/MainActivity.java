@@ -16,19 +16,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
 
-
-        // Set fullscreen
+        /* Setting game to full screen mode */
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Set No Title
+        /* Delete title */
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-
+        /* Set main screen */
         this.setContentView(new GameSurface(this));
-
-
-
 
     }
 }

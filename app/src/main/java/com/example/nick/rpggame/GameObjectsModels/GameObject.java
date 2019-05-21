@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 /**
  * Blueprint for any object in game (Player's health status, chests, etc).
  * **/
-
 public abstract class GameObject {
 
     protected Bitmap image;

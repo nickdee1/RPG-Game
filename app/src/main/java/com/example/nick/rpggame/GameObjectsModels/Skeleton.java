@@ -3,11 +3,14 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import com.example.nick.rpggame.GameSurface;
 
+
+/**
+ * Class for NPC in game
+ * */
 public class Skeleton extends ModelCharacter {
 
     private MainCharacter mainCharacter;
     private long hitTime = 0;
-
 
 
     public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
@@ -39,7 +42,9 @@ public class Skeleton extends ModelCharacter {
     private void hitMainCharacter() {
         if ((Math.abs(this.mainCharacter.getX() - this.getX()) < 5 && Math.abs(this.mainCharacter.getY() - this.getY()) < 5)
                 && (System.currentTimeMillis() - hitTime > 1000)) {
-            mainCharacter.setHealth(mainCharacter.getHealth() - 1);
+
+            if (mainCharacter.getArmor() > 0) mainCharacter.setArmor(mainCharacter.getArmor() - 1);
+            else mainCharacter.setHealth(mainCharacter.getHealth() - 1);
             hitTime = System.currentTimeMillis();
         }
     }

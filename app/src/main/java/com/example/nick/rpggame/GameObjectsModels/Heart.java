@@ -3,6 +3,10 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+
+/**
+ * Indicator of character's health and armor
+ * */
 public class Heart extends GameObject {
 
 
