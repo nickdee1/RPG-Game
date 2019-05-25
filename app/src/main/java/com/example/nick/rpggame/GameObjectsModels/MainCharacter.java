@@ -1,7 +1,11 @@
 package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import com.example.nick.rpggame.GameSurface;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -12,7 +16,8 @@ public class MainCharacter extends ModelCharacter {
     private int health;
     private int armor;
     private int healingPotionCount = 0;
-
+    private Key yellowKey = null;
+    private Key blueKey = null;
 
     /**
      * Main character initialization
@@ -84,5 +89,22 @@ public class MainCharacter extends ModelCharacter {
      * */
     public boolean isDead() {
         return health < 1;
+    }
+
+
+    public Key getYellowKey() {
+        return yellowKey;
+    }
+
+    public Key getBlueKey() {
+        return blueKey;
+    }
+
+    public void setYellowKey(Key yellowKey) {
+        this.yellowKey = yellowKey;
+    }
+
+    public void setBlueKey(Key blueKey) {
+        this.blueKey = blueKey;
     }
 }
