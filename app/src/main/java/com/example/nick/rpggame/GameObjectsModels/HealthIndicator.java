@@ -14,9 +14,8 @@ public class HealthIndicator extends GameObject {
 
     /**
      * Health indicator initialization
-     * @params:
-     * image - image of heart/armor
-     * x, y - coordinates on canvas
+     * @param image - image of heart/armor
+     * @param x, y - coordinates on canvas
      * */
     public HealthIndicator(Bitmap image, int x, int y) {
         super(image, x, y);

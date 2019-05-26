@@ -14,9 +14,8 @@ public class Tomb extends GameObject {
 
     /**
      * Tomb initialization
-     * @params:
-     * image - image of tomb
-     * x, y - coordinates on canvas
+     * @param image - image of tomb
+     * @param x, y - coordinates on canvas
      * */
     public Tomb(Bitmap image, int x, int y) {
         super(image, x, y);
@@ -26,8 +25,7 @@ public class Tomb extends GameObject {
 
     /**
      * Draw tomb on canvas
-     * @params:
-     * canvas - Game canvas
+     * @param canvas - Game canvas
      * */
     public void draw(Canvas canvas) {
         canvas.drawBitmap(tombImage, x, y, null);

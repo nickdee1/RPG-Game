@@ -25,12 +25,11 @@ public class Chest extends GameObject {
 
     /**
      * Chest initialization
-     * @params:
-     * image - Bitmap image of chest
-     * viewImage - Bitmap image of view after opening the chest
-     * closeButtonBitmap - image of closeButton used to close chestView
-     * healingPotion - Bitmap image of potion
-     * x, y - coordinates of chest on canvas
+     * @param image - Bitmap image of chest
+     * @param viewImage - Bitmap image of view after opening the chest
+     * @param closeButtonBitmap - image of closeButton used to close chestView
+     * @param healingPotion - Bitmap image of potion
+     * @param x, y - coordinates of chest on canvas
      * */
     public Chest(Bitmap image, Bitmap viewImage, Bitmap closeButtonBitmap, Bitmap healingPotion, int x, int y) {
         super(image, x, y);
@@ -54,7 +53,7 @@ public class Chest extends GameObject {
             canvas.drawBitmap(chestViewImage, 560, 350, null);
             this.closeButton.draw(canvas);
 
-            if (healingPotionCount > 0) this.healingPotion.draw(canvas);
+            if (this.healingPotionCount > 0) this.healingPotion.draw(canvas);
         }
 
     }
@@ -62,8 +61,8 @@ public class Chest extends GameObject {
 
     /**
      * Checks if character opened chest
-     * @params:
-     * touchedX, touchedY - coordinates of user's last screen tap
+     * @param touchedX - coordinates of user's last screen tap
+     * @param touchedY - coordinates of user's last screen tap
      * */
     public boolean characterOpenedChest(int touchedX, int touchedY) {
         return (Math.abs(charsX - this.getX()) < 70 && Math.abs(charsY - this.getY()) < 70) && (touchedX <= x + chestImage.getWidth() && touchedX >= x) && (touchedY <= y + chestImage.getHeight() && touchedY >= y);
@@ -71,8 +70,8 @@ public class Chest extends GameObject {
 
     /**
      * Checks if character closed chest
-     * @params:
-     * touchedX, touchedY - coordinates of user's last screen tap
+     * @param touchedX - coordinates of user's last screen tap
+     * @param touchedY - coordinates of user's last screen tap
      * */
     public boolean characterClosedChest(int touchedX, int touchedY) {
         return closeButton.isPressed(touchedX, touchedY);
@@ -80,8 +79,8 @@ public class Chest extends GameObject {
 
     /**
      * Checks if character took item from chest
-     * @params:
-     * touchedX, touchedY - coordinates of user's last screen tap
+     * @param touchedX - coordinates of user's last screen tap
+     * @param touchedY - coordinates of user's last screen tap
      * */
     public boolean characterTookPotion(int touchedX, int touchedY) {
         return healingPotion.isPressed(touchedX, touchedY);

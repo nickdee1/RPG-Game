@@ -42,10 +42,9 @@ public class ModelCharacter extends Character {
 
     /**
      * Blueprint for character in game initialization
-     * @params:
-     * gameSurface - surface that handles all graphic changes in game
-     * image - image of character on canvas
-     * x, y - coordinates on canvas
+     * @param gameSurface - surface that handles all graphic changes in game
+     * @param image - image of character on canvas
+     * @param x, y - coordinates on canvas
      * */
     public ModelCharacter(GameSurface gameSurface, Bitmap image, int x, int y) {
         super(image, 4, 3, x, y);
@@ -183,8 +182,8 @@ public class ModelCharacter extends Character {
 
     /**
      * Set moving vector to the point
-     * @params:
-     * movingVectorX, movingVectorY - moving vectors
+     * @param movingVectorX - moving vectors
+     * @param movingVectorY - moving vectors
      * */
     public void setMovingVector(int movingVectorX, int movingVectorY)  {
         this.movingVectorX = movingVectorX;
@@ -205,8 +204,7 @@ public class ModelCharacter extends Character {
 
     /**
      * Set stop point on X
-     * @params:
-     * stopped_X - x point of stop
+     * @param stopped_X - x point of stop
      * */
     public void setStopped_X(int stopped_X) {
         this.stopped_X = stopped_X;
@@ -214,8 +212,7 @@ public class ModelCharacter extends Character {
 
     /**
      * Set stop point on Y
-     * @params:
-     * stopped_Y - y point of stop
+     * @param stopped_Y - y point of stop
      * */
     public void setStopped_Y(int stopped_Y) {
         this.stopped_Y = stopped_Y;

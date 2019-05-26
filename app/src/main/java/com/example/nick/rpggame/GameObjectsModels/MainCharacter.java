@@ -21,10 +21,9 @@ public class MainCharacter extends ModelCharacter {
 
     /**
      * Main character initialization
-     * @params:
-     * gameSurface - surface that handles all graphic changes in game
-     * image - image of character
-     * x, y - coordinates on canvas
+     * @param gameSurface - surface that handles all graphic changes in game
+     * @param  image - image of character
+     * @param  x, y - coordinates on canvas
      * */
     public MainCharacter(GameSurface gameSurface, Bitmap image, int x, int y) {
         super(gameSurface, image, x, y);
@@ -51,8 +50,7 @@ public class MainCharacter extends ModelCharacter {
 
     /**
      * Decrease/increase health level
-     * @params:
-     * health - number of health points
+     * @param health - number of health points
      * */
     public void setHealth(int health) {
         this.health = health;
@@ -61,8 +59,7 @@ public class MainCharacter extends ModelCharacter {
 
     /**
      * Decrease/increase armor state
-     * @params:
-     * armor - number of armor points
+     * @param armor - number of armor points
      * */
     public void setArmor(int armor) {
         this.armor = armor;
@@ -77,8 +74,7 @@ public class MainCharacter extends ModelCharacter {
 
     /**
      * Decrease/increase number of healing potions
-     * @params:
-     * healingPotionCount - number of potions in chest
+     * @param healingPotionCount - number of potions in chest
      * */
     public void setHealingPotionCount(int healingPotionCount) {
         this.healingPotionCount = healingPotionCount;
@@ -92,18 +88,33 @@ public class MainCharacter extends ModelCharacter {
     }
 
 
+    /**
+     * @return returns yellow key
+     */
     public Key getYellowKey() {
         return yellowKey;
     }
 
+
+    /**
+     * @return returns blue key
+     */
     public Key getBlueKey() {
         return blueKey;
     }
 
+
+    /**
+     * @param yellowKey - key to be set
+     */
     public void setYellowKey(Key yellowKey) {
         this.yellowKey = yellowKey;
     }
 
+
+    /**
+     * @param blueKey - key to be set
+     */
     public void setBlueKey(Key blueKey) {
         this.blueKey = blueKey;
     }

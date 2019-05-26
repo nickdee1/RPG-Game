@@ -16,9 +16,8 @@ public class GameThread extends Thread {
 
     /**
      * Game thread initialization
-     * @params:
-     * gameSurface - surface which handles game actions
-     * surfaceHolder - game surface holder
+     * @param gameSurface - surface which handles game actions
+     * @param surfaceHolder - game surface holder
      * */
     public GameThread(GameSurface gameSurface, SurfaceHolder surfaceHolder) {
         this.gameSurface = gameSurface;

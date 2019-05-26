@@ -31,7 +31,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private GameButton useHealingPotion;
 
 
-
     /* Game objects */
     private MainCharacter mainCharacter;
     private List<RedSkeleton> redSkeletons = new ArrayList<>();
@@ -45,9 +44,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private Key yellowKey;
     private Key blueKey;
 
+
     /* Game indicators */
     private List<HealthIndicator> health = new ArrayList<>();
     private List<HealthIndicator> armor = new ArrayList<>();
+
 
     /* Game images */
     private Bitmap background;
@@ -57,6 +58,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private Bitmap heartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.heart_1);
     private Bitmap armorBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.armor_shield);
     private Bitmap gameOver = BitmapFactory.decodeResource(this.getResources(), R.drawable.game_over);
+    private Bitmap victory = BitmapFactory.decodeResource(this.getResources(), R.drawable.victory_screen);
     private Bitmap skeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton);
     private Bitmap redSkeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton_red);
     private Bitmap greenSkeletonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.skeleton_big_green);
@@ -74,6 +76,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     private int numberOfWhiteSkeletons = 1;
 
 
+
     public GameSurface(Context context) {
         super(context);
         this.setFocusable(true);
@@ -83,8 +86,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Game Images initialization after launching the game
-     * @params:
-     * holder - game surface holder
+     * @param holder - game surface holder
      **/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -109,9 +111,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.pauseBackground = Bitmap.createScaledBitmap(pauseBackgroundBitmap, 1130, 450, false);
 
 
-        /* Main character initialization */
+        /* Main character and final boss initialization */
         this.mainCharacter = new MainCharacter(this, knightBitmap,400,885);
-        this.fireball = new Fireball(Bitmap.createScaledBitmap(this.fireballBitmap, 50, 50, false), 600, 900);
+        this.greenSkeleton = new GreenSkeleton(this, greenSkeletonBitmap, 600, 600, this.mainCharacter);
 
         /* Game buttons initialization */
         this.gameButton = new GameButton(Bitmap.createScaledBitmap(pauseButtonBitmap, 150, 150, false), 1620, 10);
@@ -122,7 +124,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.useHealingPotion = new GameButton(Bitmap.createScaledBitmap(healingPotionBitmap, 360, 360, false), 0, 790);
 
 
-        this.greenSkeleton = new GreenSkeleton(this, greenSkeletonBitmap, 600, 600, this.mainCharacter);
 
         /* Make thread work after surface creation */
         this.gameThread = new GameThread(this, holder);
@@ -140,8 +141,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Actions after surface destroyed
-     * @params:
-     * holder - game surface holder
+     * @param holder - game surface holder
      * */
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -165,45 +165,47 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         if (started) {
             if (!paused && !chest.isOpened()) {
 
+                /* Update characters on screen */
                 for (Skeleton skeleton: this.redSkeletons) {
                     skeleton.updateCharacterMovement();
                 }
-
                 for (Skeleton skeleton: this.skeletons) {
                     skeleton.updateCharacterMovement();
                 }
-
                 greenSkeleton.updateCharacterMovement();
-
                 mainCharacter.updateCharacterMovement();
-                fireball.updateFireballMovement();
+
+
+                /* Update character's health/armor points */
                 characterHealthUpdate();
                 characterArmorUpdate();
 
+                /* Give character's coordinates to objects in order to interact with them */
                 chest.setCharsX(mainCharacter.getX());
                 chest.setCharsY(mainCharacter.getY());
-
                 doorToSecondLevel.setCharsX(mainCharacter.getX());
                 doorToSecondLevel.setCharsY(mainCharacter.getY());
-
                 doorToThirdLevel.setCharsX(mainCharacter.getX());
                 doorToThirdLevel.setCharsY(mainCharacter.getY());
 
-                if (this.skeletons.isEmpty() && numberOfWhiteSkeletons < 3) {
+
+                /* Update number of NPC */
+                if (this.skeletons.isEmpty() && numberOfWhiteSkeletons < 1) {
                     numberOfWhiteSkeletons += 1;
                     mobsInit(numberOfWhiteSkeletons, 1);
                 }
-
-
-                if (this.redSkeletons.isEmpty() && numberOfRedSkeletons < 3) {
+                if (this.redSkeletons.isEmpty() && numberOfRedSkeletons < 2) {
                     numberOfRedSkeletons += 1;
                     mobsInit(numberOfRedSkeletons, 2);
                 }
 
 
-                if (numberOfRedSkeletons % 2 == 0) chest.setHealingPotionCount(1);
-
+                /* Finish the game in case of death or victory */
                 if (mainCharacter.isDead()) {
+                    gameFinished();
+                    level = 1;
+                }
+                if (greenSkeleton.getHealth() <= 0) {
                     gameFinished();
                     level = 1;
                 }
@@ -216,6 +218,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                     e.printStackTrace();
                 }
             }
+
         } else {
             gameStarted();
         }
@@ -225,8 +228,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Updates objects' place on canvas
-     * @params:
-     * canvas - game canvas
+     * @param canvas - game canvas
      * */
     @Override
     public void draw(Canvas canvas) {
@@ -237,6 +239,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             this.playGameButton.draw(canvas);
         } else {
 
+             /* Game components for 1st level drawn */
             if (level == 1)  {
                 canvas.drawBitmap(this.background, 0, 0, null);
 
@@ -246,25 +249,36 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                         tomb.draw(canvas);
                     }
                 }
-                this.chest.draw(canvas);
 
                 this.doorToSecondLevel.draw(canvas);
                 this.doorToThirdLevel.draw(canvas);
+                this.mainCharacter.draw(canvas);
+                this.chest.draw(canvas);
 
                 for (Skeleton skeleton: this.skeletons) {
                     skeleton.draw(canvas);
                 }
 
-
                 /* Yellow key interaction */
-                if (this.skeletons.isEmpty() && numberOfWhiteSkeletons > 0 && mainCharacter.getYellowKey() == null) this.yellowKey.draw(canvas);
-                if (Math.abs(this.mainCharacter.getX() - this.yellowKey.getX()) < 25 && Math.abs(this.mainCharacter.getY() - this.yellowKey.getY()) < 25
-                        && this.mainCharacter.getYellowKey() == null) this.mainCharacter.setYellowKey(this.yellowKey);
+                if (this.skeletons.isEmpty() && numberOfWhiteSkeletons > 0 && mainCharacter.getYellowKey() == null) {
+                    this.yellowKey.setVisible(true);
+                    this.yellowKey.draw(canvas);
+                }
+                if (Math.abs(this.mainCharacter.getX() - this.yellowKey.getX()) < 35 && Math.abs(this.mainCharacter.getY() - this.yellowKey.getY()) < 35
+                        && this.mainCharacter.getYellowKey() == null && this.yellowKey.isVisible()) this.mainCharacter.setYellowKey(this.yellowKey);
 
 
-            } else if (level == 2){
+            /* Game components for 2nd level drawn **/
+            } else if (level == 2) {
 
                 canvas.drawBitmap(this.secondLevelBackground, 0, 0,null);
+
+                /* Draw tomb on place where skeleton died */
+                if (!tombs.isEmpty()) {
+                    for (Tomb tomb: tombs) {
+                        tomb.draw(canvas);
+                    }
+                }
 
                 this.doorToSecondLevel.draw(canvas);
 
@@ -272,18 +286,33 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                     skeleton.draw(canvas);
                 }
 
-                if (this.redSkeletons.isEmpty() && numberOfRedSkeletons > 0 && mainCharacter.getBlueKey() == null) this.blueKey.draw(canvas);
-                if (Math.abs(this.mainCharacter.getX() - this.blueKey.getX()) < 10 && Math.abs(this.mainCharacter.getY() - this.blueKey.getY()) < 10
-                        && this.mainCharacter.getBlueKey() == null) this.mainCharacter.setBlueKey(this.blueKey);
+                /* Blue key interaction */
+                if (this.redSkeletons.isEmpty() && numberOfRedSkeletons > 0 && mainCharacter.getBlueKey() == null) {
+                    this.blueKey.setVisible(true);
+                    this.blueKey.draw(canvas);
+                }
+                if (Math.abs(this.mainCharacter.getX() - this.blueKey.getX()) < 25 && Math.abs(this.mainCharacter.getY() - this.blueKey.getY()) < 25
+                        && this.mainCharacter.getBlueKey() == null && this.blueKey.isVisible())
+                                this.mainCharacter.setBlueKey(this.blueKey);
+
+
+                this.mainCharacter.draw(canvas);
 
             } else {
+
                 canvas.drawBitmap(this.thirdLevelBackground, 0, 0, null);
                 this.doorToThirdLevel.draw(canvas);
+                this.mainCharacter.draw(canvas);
+
+                /* Draw NPC */
+                for (Skeleton skeleton: this.skeletons) {
+                    skeleton.draw(canvas);
+                }
+                for (RedSkeleton redSkeleton: this.redSkeletons) {
+                    redSkeleton.draw(canvas);
+                }
                 if (greenSkeleton.getHealth() > 0) greenSkeleton.draw(canvas);
             }
-
-
-            this.mainCharacter.draw(canvas);
 
 
             /* Draw health and armor indicators */
@@ -301,12 +330,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
             /* If main char is dead, GameOver is drawn */
             if (mainCharacter.isDead()) canvas.drawBitmap(Bitmap.createScaledBitmap(gameOver, 1920, 1080, false), 0,0,null);
+            /* If main char killed boss, Victory is drawn */
+            if (greenSkeleton.getHealth() <= 0) canvas.drawBitmap(Bitmap.createScaledBitmap(victory, 1920, 1080, false), 0,0,null);
 
 
             /* Draw pause menu subview */
             if (paused) {
                 canvas.drawBitmap(pauseBackground, 395, 315, null);
-                if (!mainCharacter.isDead()) this.resumeGameButton.draw(canvas);
+                if (!mainCharacter.isDead() || greenSkeleton.getHealth() <= 0) this.resumeGameButton.draw(canvas);
                 this.toMainMenuButton.draw(canvas);
             } else this.gameButton.draw(canvas);
         }
@@ -327,6 +358,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
             /* Game starts after user touched PLAY button */
             if (!started && playGameButton.isPressed(x, y)) {
+                greenSkeleton.setHealth(1);
+
                 started = true;
                 return true;
 
@@ -350,8 +383,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                     chest.setOpened(false);
                     Log.v("onTouchEventMethod", "User closed chest");
 
-                } else if (chest.isOpened() && chest.characterTookPotion(x, y)) {
-                    chest.setHealingPotionCount(chest.getHealingPotionCount() - 1);
+                } else if (this.chest.isOpened() && this.chest.characterTookPotion(x, y) && this.chest.getHealingPotionCount() > 0) {
+                    this.chest.setHealingPotionCount(0);
                     mainCharacter.setHealingPotionCount(mainCharacter.getHealingPotionCount() + 1);
                     Log.v("onTouchEventMethod", "User took healing potion");
 
@@ -364,12 +397,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
                  /* Doors interaction */
                 } else if (doorToSecondLevel.playerOpenedDoor(x, y)) {
-                    level = (level == 1) ? 2 : 1;
                     firstLevelFinished();
+                    level = (level == 1) ? 2 : 1;
                     secondLevelLoaded();
 
                 } else if (doorToThirdLevel.playerOpenedDoor(x, y)) {
-                    level = (level == 1) ? 3 : 1;
+                    level = 3;
+                    mainCharacter.setBlueKey(null);
                     secondLevelFinished();
                     thirdLevelLoaded();
 
@@ -382,6 +416,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                     started = false;
                     paused = false;
                     level = 1;
+                    gameFinished();
                     Log.v("onTouchEventMethod", "Went to the main menu");
 
                 /* Main character goes to touched point */
@@ -396,7 +431,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
                     this.mainCharacter.setStopped_X(x);
                     this.mainCharacter.setStopped_Y(y);
-
                 }
                 return true;
             }
@@ -435,7 +469,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             }
         } else if (whichLevel == 2) {
             for (int i = 0; i < numberOfNPC; i++) {
-                this.redSkeletons.add(new RedSkeleton(this, redSkeletonBitmap, 1000 + i*30, 170 + i*43, this.mainCharacter, Bitmap.createScaledBitmap(this.fireballBitmap, 50, 50, false)));
+                this.redSkeletons.add(new RedSkeleton(this, redSkeletonBitmap, 200 + i*30, 170 + i*43, this.mainCharacter, Bitmap.createScaledBitmap(this.fireballBitmap, 75, 75, false)));
             }
         }
     }
@@ -452,7 +486,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                             skeleton.getX(), skeleton.getY()));
 
                     redSkeletons.remove(skeleton);
-                    Log.v("onTouchEventMethod", "Skeleton killed by user");
+                    Log.v("onTouchEventMethod", "Red Skeleton killed by user");
                     break;
                 }
             }
@@ -473,8 +507,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        if (greenSkeleton.getHealth() > 0 && Math.abs(this.mainCharacter.getX() - greenSkeleton.getX()) <= 20 &&
-                Math.abs(this.mainCharacter.getY() - greenSkeleton.getY()) <= 20) {
+        if (greenSkeleton.getHealth() > 0 && Math.abs(this.mainCharacter.getX() - greenSkeleton.getX()) <= 40 &&
+                Math.abs(this.mainCharacter.getY() - greenSkeleton.getY()) <= 40) {
             greenSkeleton.setHealth(greenSkeleton.getHealth() - 1);
         }
     }
@@ -486,11 +520,12 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         this.yellowKey = new Key(Bitmap.createScaledBitmap(keyYellowBitmap, 100, 50, false), 700,400, "YellowKey");
         this.blueKey = new Key(Bitmap.createScaledBitmap(keyBlueBitmap, 100, 50, false), 700,600, "BlueKey");
         this.doorToSecondLevel = new Door(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.door), 100, 150, false), 1650, 300, this.mainCharacter, this.yellowKey);
-        this.doorToThirdLevel = new Door(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.door), 100, 150, false), 1650, 650, this.mainCharacter, this.blueKey);
+        this.doorToThirdLevel = new Door(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.door_blue), 100, 150, false), 1650, 650, this.mainCharacter, this.blueKey);
         redSkeletons.clear();
         skeletons.clear();
         tombs.clear();
         numberOfRedSkeletons = 1;
+        numberOfWhiteSkeletons = 1;
         chest.setHealingPotionCount(1);
         mobsInit(numberOfRedSkeletons, level);
         characterHealthUpdate();
@@ -503,28 +538,27 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         tombs.clear();
         numberOfRedSkeletons = 0;
         numberOfWhiteSkeletons = 0;
+        chest.setHealingPotionCount(1);
+        yellowKey.setVisible(false);
+        blueKey.setVisible(false);
     }
 
-    private void firstLevelLoaded() {
-        gameStarted();
-        this.background = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.background), 1900, 1080, false);
-    }
 
+    /* Actions after load/finish levels */
     private void firstLevelFinished() {
         gameFinished();
     }
-
     private void secondLevelLoaded() {
         secondLevelBackground = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.level_2), 1920, 1080, false);
+        mobsInit(1, 2);
     }
-
     private void secondLevelFinished() {
         gameFinished();
     }
-
     private void thirdLevelLoaded() {
         thirdLevelBackground = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.level_3), 1920, 1080, false);
+        //mobsInit(2, 1);
+        mobsInit(1, 2);
         this.greenSkeleton = new GreenSkeleton(this, greenSkeletonBitmap, 200, 200, this.mainCharacter);
-
     }
 }

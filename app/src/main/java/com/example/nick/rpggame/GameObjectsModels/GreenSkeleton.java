@@ -3,6 +3,10 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import com.example.nick.rpggame.GameSurface;
 
+
+/**
+ * Final boss initialization
+ * */
 public class GreenSkeleton extends Skeleton {
 
     private Bitmap greenSkeletonImage;
@@ -12,15 +16,11 @@ public class GreenSkeleton extends Skeleton {
     /**
      * Skeleton initialization
      *
-     * @param gameSurface
-     * @param image
-     * @param x
-     * @param y
-     * @param mainCharacter
-     * @params: gameSurface - surface that handles all graphic changes in game
-     * image - image of character
-     * x, y - coordinates on canvas
-     * mainCharacter - player's character
+     * @param gameSurface - surface that handles all graphic changes in game
+     * @param image - skeleton image
+     * @param x - coordinates on canvas
+     * @param y - coordinates on canvas
+     * @param mainCharacter - player's character
      */
     public GreenSkeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
         super(gameSurface, image, x, y, mainCharacter);
@@ -34,10 +34,17 @@ public class GreenSkeleton extends Skeleton {
     }
 
 
+    /**
+     * @return number of health points of skeleton
+     */
     public int getHealth() {
         return health;
     }
 
+
+    /**
+     * @param health - set health points
+     */
     public void setHealth(int health) {
         this.health = health;
     }

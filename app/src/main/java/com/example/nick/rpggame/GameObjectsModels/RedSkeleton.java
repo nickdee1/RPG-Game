@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import com.example.nick.rpggame.GameSurface;
 
+
+/**
+ * Red skeleton initialization
+ */
 public class RedSkeleton extends Skeleton {
 
 
@@ -14,26 +18,22 @@ public class RedSkeleton extends Skeleton {
     private int movingVectorX;
     private int movingVectorY;
 
-    private boolean thrown = false;
+    private boolean hit = false;
+    private boolean farFromCharacter = true;
 
     /**
      * Skeleton initialization
-     *
-     * @param gameSurface
-     * @param image
-     * @param x
-     * @param y
-     * @param mainCharacter
-     * @params: gameSurface - surface that handles all graphic changes in game
-     * image - image of character
-     * x, y - coordinates on canvas
-     * mainCharacter - player's character
+     * @param gameSurface - surface that handles all graphic changes in game
+     * @param image - image of skeleton
+     * @param x - coordinates on canvas
+     * @param y - coordinates on canvas
+     * @param mainCharacter - player's character
      */
     public RedSkeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter, Bitmap fireballBitmap) {
         super(gameSurface, image, x, y, mainCharacter);
 
         this.mainCharacter = mainCharacter;
-        this.fireball = new Fireball(fireballBitmap, x, y);
+        this.fireball = new Fireball(fireballBitmap, this.x, this.y, mainCharacter);
 
     }
 
@@ -44,6 +44,7 @@ public class RedSkeleton extends Skeleton {
 
     }
 
+
     private void setMovingVectorOffMainChar() {
         int mainCharX = this.mainCharacter.getX();
         int mainCharY = this.mainCharacter.getY();
@@ -51,16 +52,23 @@ public class RedSkeleton extends Skeleton {
         movingVectorX = mainCharX - this.getX();
         movingVectorY = mainCharY - this.getY();
 
-        if (Math.abs(movingVectorX) > 60 && Math.abs(movingVectorY) > 60) {
+        if (Math.abs(movingVectorX) > 40 && Math.abs(movingVectorY) > 40) {
             setMovingVector(0,0);
             this.setStopped(true);
-            farFromMainCharacter = true;
+            this.farFromMainCharacter = true;
 
+            this.fireball.updateFireballMovement();
+
+            if (this.fireball.touchedMainCharacter()) {
+                if (mainCharacter.getArmor() > 0) mainCharacter.setArmor(mainCharacter.getArmor() - 1);
+                else mainCharacter.setHealth(mainCharacter.getHealth() - 1);
+                hit = true;
+            }
         }
         else {
             setMovingVector(movingVectorX, movingVectorY);
             this.setStopped(false);
-            farFromMainCharacter = false;
+            this.farFromMainCharacter = false;
         }
     }
 
@@ -68,13 +76,8 @@ public class RedSkeleton extends Skeleton {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        if (!hit && this.farFromMainCharacter) this.fireball.draw(canvas);
     }
 
-    public void setThrown(boolean thrown) {
-        this.thrown = thrown;
-    }
 
-    public boolean isThrown() {
-        return thrown;
-    }
 }

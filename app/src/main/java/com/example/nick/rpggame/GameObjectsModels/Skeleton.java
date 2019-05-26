@@ -16,10 +16,10 @@ public class Skeleton extends ModelCharacter {
     /**
      * Skeleton initialization
      * @params:
-     * gameSurface - surface that handles all graphic changes in game
-     * image - image of character
-     * x, y - coordinates on canvas
-     * mainCharacter - player's character
+     * @param gameSurface - surface that handles all graphic changes in game
+     * @param image - image of character
+     * @param x, y - coordinates on canvas
+     * @param  mainCharacter - player's character
      * */
     public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
         super(gameSurface, image, x, y);
@@ -40,6 +40,8 @@ public class Skeleton extends ModelCharacter {
         int movingVectorY = mainCharY - this.getY();
 
         setMovingVector(movingVectorX, movingVectorY);
+
+        System.out.println("Skeleton X" + this.getX());
 
         hitMainCharacter();
     }

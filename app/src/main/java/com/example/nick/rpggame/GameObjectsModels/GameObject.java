@@ -18,9 +18,8 @@ public abstract class GameObject {
 
     /**
      * Game object initialization
-     * @params:
-     * image - image of game object
-     * x, y - coordinates of creation on canvas
+     * @param image - image of game object
+     * @param x, y - coordinates of creation on canvas
      * */
     public GameObject(Bitmap image, int x, int y) {
         this.image = image;
