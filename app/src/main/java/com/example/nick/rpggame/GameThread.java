@@ -9,18 +9,17 @@ import android.view.SurfaceHolder;
  * */
 public class GameThread extends Thread {
 
-    private GameSurface gameSurface;
+    private SurfaceType newSurface;
     private SurfaceHolder surfaceHolder;
 
     private boolean running;
 
     /**
      * Game thread initialization
-     * @param gameSurface - surface which handles game actions
      * @param surfaceHolder - game surface holder
      * */
-    public GameThread(GameSurface gameSurface, SurfaceHolder surfaceHolder) {
-        this.gameSurface = gameSurface;
+    public GameThread(SurfaceType newSurface, SurfaceHolder surfaceHolder) {
+        this.newSurface = newSurface;
         this.surfaceHolder = surfaceHolder;
     }
 
@@ -42,8 +41,8 @@ public class GameThread extends Thread {
                 canvas = this.surfaceHolder.lockCanvas();
 
                 synchronized (canvas) {
-                        this.gameSurface.update();
-                        this.gameSurface.draw(canvas);
+                    this.newSurface.update();
+                    this.newSurface.draw(canvas);
 
                 }
 
