@@ -1,6 +1,8 @@
 package com.example.nick.rpggame;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.*;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -344,6 +346,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
+
+
     /**
      * Handles user's screen touch events (character's movement)
      **/
@@ -360,7 +364,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             if (!started && playGameButton.isPressed(x, y)) {
                 greenSkeleton.setHealth(1);
 
-                started = true;
+
+                Intent intent = new Intent().setClass(getContext(), NewActivity.class);
+                ((Activity) getContext()).startActivity(intent);
+
+//                try {
+//                    this.gameThread.join();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                //started = true;
                 return true;
 
             } else {
