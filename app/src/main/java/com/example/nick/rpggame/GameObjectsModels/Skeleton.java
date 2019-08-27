@@ -1,7 +1,9 @@
 package com.example.nick.rpggame.GameObjectsModels;
 
 import android.graphics.Bitmap;
-import com.example.nick.rpggame.GameSurface;
+import android.view.SurfaceView;
+import com.example.nick.rpggame.LevelSurfaceType;
+import com.example.nick.rpggame.SurfaceType;
 
 
 /**
@@ -21,7 +23,7 @@ public class Skeleton extends ModelCharacter {
      * @param x, y - coordinates on canvas
      * @param  mainCharacter - player's character
      * */
-    public Skeleton(GameSurface gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
+    public Skeleton(LevelSurfaceType gameSurface, Bitmap image, int x, int y, MainCharacter mainCharacter) {
         super(gameSurface, image, x, y);
         this.mainCharacter = mainCharacter;
 
@@ -40,8 +42,6 @@ public class Skeleton extends ModelCharacter {
         int movingVectorY = mainCharY - this.getY();
 
         setMovingVector(movingVectorX, movingVectorY);
-
-        System.out.println("Skeleton X" + this.getX());
 
         hitMainCharacter();
     }

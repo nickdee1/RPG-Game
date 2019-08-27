@@ -3,6 +3,7 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.SurfaceView;
+import com.example.nick.rpggame.LevelSurfaceType;
 
 
 /**
@@ -37,7 +38,7 @@ public class ModelCharacter extends Character {
 
     private long lastDrawNanoTime = -1;
 
-    private SurfaceView gameSurface;
+    private LevelSurfaceType gameSurface;
 
 
     /**
@@ -46,7 +47,7 @@ public class ModelCharacter extends Character {
      * @param image - image of character on canvas
      * @param x, y - coordinates on canvas
      * */
-    public ModelCharacter(SurfaceView gameSurface, Bitmap image, int x, int y) {
+    public ModelCharacter(LevelSurfaceType gameSurface, Bitmap image, int x, int y) {
         super(image, 4, 3, x, y);
 
         this.gameSurface = gameSurface;

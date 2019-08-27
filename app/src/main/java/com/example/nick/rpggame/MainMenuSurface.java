@@ -9,22 +9,20 @@ import android.view.MotionEvent;
 
 
 /**
- * The GameSurface initializes and displays every action that
- * happens in game on user's screen
+ * The MainMenuSurface initializes and displays
+ * main menu surface
  * */
-public class GameSurface extends SurfaceType implements SurfaceHolder.Callback {
+public class MainMenuSurface extends SurfaceType implements SurfaceHolder.Callback {
 
 
-    /* Game Buttons */
-    private MainMenu mainMenu;
     private GameButton playGameButton;
+    private Bitmap mainMenuBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.main_menu);
 
-
-
-    public GameSurface(Context context) {
+    public MainMenuSurface(Context context) {
         super(context);
         this.setFocusable(true);
         this.getHolder().addCallback(this);
+
     }
 
 
@@ -37,15 +35,12 @@ public class GameSurface extends SurfaceType implements SurfaceHolder.Callback {
         super.surfaceCreated(holder);
 
         /* Images are used in game */
-        Bitmap mainMenuBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.main_menu);
         Bitmap playButtonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play_button);
-
-
-        /* Game subviews and backgrounds initialization */
-        this.mainMenu = new MainMenu(Bitmap.createScaledBitmap(mainMenuBitmap, this.getWidth(), this.getHeight(), false));
+        mainMenuBitmap = Bitmap.createScaledBitmap(mainMenuBitmap, getWidth(), getHeight(), false);
 
         /* Game buttons initialization */
         this.playGameButton = new GameButton(Bitmap.createScaledBitmap(playButtonBitmap, 650, 200, false), 625, 445);
+
     }
 
 
@@ -57,13 +52,17 @@ public class GameSurface extends SurfaceType implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        this.mainMenu.draw(canvas);
+        canvas.drawBitmap(mainMenuBitmap, 0, 0, null);
         this.playGameButton.draw(canvas);
-
     }
 
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        super.surfaceDestroyed(holder);
 
-
+        mainMenuBitmap.recycle();
+        playGameButton.recycle();
+    }
 
     /**
      * Handles user's screen touch events (character's movement)
@@ -79,10 +78,8 @@ public class GameSurface extends SurfaceType implements SurfaceHolder.Callback {
 
             /* Game starts after user touched PLAY button */
             if (playGameButton.isPressed(x, y)) {
-
                 Intent intent = new Intent().setClass(getContext(), FirstLevelActivity.class);
                 ((Activity) getContext()).startActivity(intent);
-
             }
         }
         return true;

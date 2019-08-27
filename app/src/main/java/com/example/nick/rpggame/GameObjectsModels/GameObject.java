@@ -66,4 +66,10 @@ public abstract class GameObject {
     public Bitmap createImage() {
         return Bitmap.createBitmap(image, 0, 0, getObjectWidth(), getObjectHeight());
     }
+
+
+    public void recycle() {
+        this.image.recycle();
+        System.out.println("destroyed");
+    }
 }

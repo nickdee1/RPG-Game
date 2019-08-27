@@ -1,8 +1,12 @@
 package com.example.nick.rpggame.GameObjectsModels;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.Log;
+import com.example.nick.rpggame.R;
 
 
 /**
@@ -11,12 +15,9 @@ import android.util.Log;
 public class Door extends GameObject {
 
     private Bitmap doorImage;
-    private MainCharacter mainCharacter;
-
     private int charsX;
     private int charsY;
 
-    private Key key;
 
     /**
      * Game object initialization
@@ -25,12 +26,11 @@ public class Door extends GameObject {
      * @param x - x coordinate of Door
      * @param y - y coordinate of Door
      */
-    public Door(Bitmap image, int x, int y, MainCharacter mainCharacter, Key key) {
+    public Door(Bitmap image, int x, int y) {
         super(image, x, y);
 
         this.doorImage = image;
-        this.mainCharacter = mainCharacter;
-        this.key = key;
+
     }
 
 
@@ -51,11 +51,10 @@ public class Door extends GameObject {
      */
     public boolean playerOpenedDoor(int touchedX, int touchedY) {
         if ((Math.abs(charsX - this.getX()) < 70 && Math.abs(charsY - this.getY()) < 70) && (touchedX <= x + doorImage.getWidth() && touchedX >= x) && (touchedY <= y + doorImage.getHeight() && touchedY >= y)) {
-                if (this.key.equals(this.mainCharacter.getBlueKey()) || this.key.equals(this.mainCharacter.getYellowKey())) {
 
-                Log.v("Door", "Opened");
-                return true;
-            }
+            Log.v("Door", "Opened");
+            return true;
+
         }
         return false;
     }
@@ -63,16 +62,11 @@ public class Door extends GameObject {
 
     /**
      * @param charsX - X coordinate of player
-     */
-    public void setCharsX(int charsX) {
-        this.charsX = charsX;
-    }
-
-
-    /**
      * @param charsY - Y coordinate of player
      */
-    public void setCharsY(int charsY) {
+    public void setCharsCoordinates(int charsX, int charsY) {
+        this.charsX = charsX;
         this.charsY = charsY;
     }
+
 }

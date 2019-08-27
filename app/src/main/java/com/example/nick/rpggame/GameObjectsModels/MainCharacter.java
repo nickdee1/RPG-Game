@@ -3,6 +3,7 @@ package com.example.nick.rpggame.GameObjectsModels;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.SurfaceView;
+import com.example.nick.rpggame.LevelSurfaceType;
 
 
 /**
@@ -22,7 +23,7 @@ public class MainCharacter extends ModelCharacter {
      * @param  image - image of character
      * @param  x, y - coordinates on canvas
      * */
-    public MainCharacter(SurfaceView gameSurface, Bitmap image, int x, int y) {
+    public MainCharacter(LevelSurfaceType gameSurface, Bitmap image, int x, int y) {
         super(gameSurface, image, x, y);
 
         this.health = 5;

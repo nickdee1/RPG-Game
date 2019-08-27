@@ -4,11 +4,12 @@ import android.content.Context;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-abstract class SurfaceType extends SurfaceView implements SurfaceHolder.Callback {
+/**
+ * Template for any level surface in game
+ */
+public abstract class SurfaceType extends SurfaceView implements SurfaceHolder.Callback {
 
-
-    public GameThread thread;
-
+    private GameThread thread;
 
     public SurfaceType(Context context) {
         super(context);
@@ -16,9 +17,13 @@ abstract class SurfaceType extends SurfaceView implements SurfaceHolder.Callback
         this.getHolder().addCallback(this);
     }
 
+
     public void update() {}
 
-
+    /**
+     * Actions after any surface is created
+     * @param holder - The SurfaceHolder whose surface is being created
+     */
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
@@ -28,11 +33,23 @@ abstract class SurfaceType extends SurfaceView implements SurfaceHolder.Callback
         this.thread.start();
     }
 
+
+    /**
+     * Actions after surface is changed
+     * @param holder - The SurfaceHolder whose surface is being changed
+     * @param format - The new PixelFormat of the surface
+     * @param width - The new width of the surface
+     * @param height - The new height of the surface
+     */
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
+
+    /**
+     * Actions after surface is destroyed
+     * @param holder - The SurfaceHolder whose surface is being destroyed
+     */
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         try {

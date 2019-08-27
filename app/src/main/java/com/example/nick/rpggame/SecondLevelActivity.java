@@ -6,9 +6,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
-public class MainActivity extends Activity {
-
-
+public class SecondLevelActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,14 +20,8 @@ public class MainActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         /* Set main screen */
-        this.setContentView(new MainMenuSurface(this));
-
+        this.setContentView(new SecondLevelSurface(this));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
 
-        System.out.println("Stopped");
-    }
 }

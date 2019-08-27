@@ -19,6 +19,8 @@
         </activity>
         <activity android:name=".FirstLevelActivity">
         </activity>
+        <activity android:name=".SecondLevelActivity">
+        </activity>
     </application>
 
 </manifest>
